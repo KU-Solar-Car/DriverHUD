@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Driver HUD mockup</title>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+		body {
+			margin: 0;
+		}
+		#bg {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: -100;
+			opacity: 0.3;
+			background: url(https://wallpaperplay.com/walls/full/4/6/5/213713.jpg) center/cover no-repeat;
+		}
+		#info {
+			position: absolute;
+			top: 3vh;
+			left: 0;
+			width: 100%;
+			text-align: center;
+			font: 5vw sans-serif;
+			background: white;
+			border: 2px solid gold;
+			padding: 0.5vh;
+		}
+		#video { /* Webcam and display are both 16:9 */
+			position: absolute;
+			bottom: 3vh;
+			left: 12.5vw;
+			width: 75vw;
+			height: 75vh;
+			border: 2px solid gold;
+			background: black url(https://cdn4.iconfinder.com/data/icons/travel-solid-style/24/sign-no-photo-512.png) center/contain no-repeat;
+		}
+	</style>
+	<script>
+		function setupCamera() {
+			var video = document.getElementById('video');
+			
+			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
+				video.srcObject = stream;
+				video.play();
+			});
+		}
+	</script>
+</head>
+<body onload="setupCamera()">
+	<div id="bg"></div>
+	<div id="info">
+		88 mph | 12:00 am | 93&deg;F | 53%
+	</div>
+	<video id="video"></video>
+</body>
+</html>
