@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Driver HUD mockup</title>
+	<title>Driver HUD</title>
 	<style>
 		* {
 			box-sizing: border-box;
@@ -17,7 +17,7 @@
 			height: 100vh;
 			z-index: -100;
 			opacity: 0.3;
-			background: url(https://wallpaperplay.com/walls/full/4/6/5/213713.jpg) center/cover no-repeat;
+			background: url(images/background.jpg) center/cover no-repeat;
 		}
 		#info {
 			position: absolute;
@@ -30,32 +30,60 @@
 			border: 2px solid gold;
 			padding: 0.5vh;
 		}
-		#video { /* Webcam and display are both 16:9 */
+		#clock {
+			font-family: monospace;
+		}
+		
+		/* Webcam is displayed at 4:3, despite actually being 16:9 */
+		#camera-container {
 			position: absolute;
 			bottom: 3vh;
-			left: 12.5vw;
-			width: 75vw;
+			left: 0;
+			width: 100vw;
+			height: 75vh;
+			text-align: center;
+		}
+		#camera { 
+			width: 100vh; /* Note usage vh, not vw */
 			height: 75vh;
 			border: 2px solid gold;
-			background: black url(https://cdn4.iconfinder.com/data/icons/travel-solid-style/24/sign-no-photo-512.png) center/contain no-repeat;
+			background: black url(images/no-camera.png) center/contain no-repeat;
 		}
 	</style>
 	<script>
+		window.onload = function() {
+			clockTick();
+			setupCamera();
+			setInterval(clockTick, 1000);
+		}
+		
+		function clockTick() {
+			var d = new Date();
+			var hour = ((d.getHours() % 12) || 12);
+			//hour = (hour < 10 ? "&nbsp;" : "") + hour; // Pad hour
+			var colon = d.getSeconds() % 2 ? ":" : " ";
+			var min = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes()
+			var amOrPm = d.getHours() >= 12 ? "pm" : "am";
+			document.getElementById("clock").innerHTML = hour + colon + min + amOrPm;
+		}
+		
 		function setupCamera() {
-			var video = document.getElementById('video');
+			var camera = document.getElementById('camera');
 			
 			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
-				video.srcObject = stream;
-				video.play();
+				camera.srcObject = stream;
+				camera.play();
 			});
 		}
 	</script>
 </head>
-<body onload="setupCamera()">
+<body>
 	<div id="bg"></div>
 	<div id="info">
-		88 mph | 12:00 am | 93&deg;F | 53%
+		88 mph | <span id="clock">--:-- --</span> | 93&deg;F | 53%
 	</div>
-	<video id="video"></video>
+	<div id="camera-container">
+		<video id="camera"></video>
+	</div>
 </body>
 </html>
