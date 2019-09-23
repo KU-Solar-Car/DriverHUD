@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Driver HUD mockup</title>
+	<title>Driver HUD</title>
 	<style>
 		* {
 			box-sizing: border-box;
@@ -30,11 +30,18 @@
 			border: 2px solid gold;
 			padding: 0.5vh;
 		}
-		#video { /* Webcam and display are both 16:9 */
+		
+		/* Webcam is displayed at 4:3, despite actually being 16:9 */
+		#camera-container {
 			position: absolute;
 			bottom: 3vh;
-			left: 12.5vw;
-			width: 75vw;
+			left: 0;
+			width: 100vw;
+			height: 75vh;
+			text-align: center;
+		}
+		#camera { 
+			width: 100vh; /* Note usage vh, not vw */
 			height: 75vh;
 			border: 2px solid gold;
 			background: black url(images/no-camera.png) center/contain no-repeat;
@@ -42,11 +49,11 @@
 	</style>
 	<script>
 		function setupCamera() {
-			var video = document.getElementById('video');
+			var camera = document.getElementById('camera');
 			
 			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
-				video.srcObject = stream;
-				video.play();
+				camera.srcObject = stream;
+				camera.play();
 			});
 		}
 	</script>
@@ -56,6 +63,8 @@
 	<div id="info">
 		88 mph | 12:00 am | 93&deg;F | 53%
 	</div>
-	<video id="video"></video>
+	<div id="camera-container">
+		<video id="camera"></video>
+	</div>
 </body>
 </html>
