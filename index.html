@@ -59,11 +59,12 @@
 		
 		function clockTick() {
 			var d = new Date();
-			var hour = (d.getHours() < 10 ? " " : "") +  ((d.getHours() % 12) || 12);
+			var hour = ((d.getHours() % 12) || 12);
+			//hour = (hour < 10 ? "&nbsp;" : "") + hour; // Pad hour
 			var colon = d.getSeconds() % 2 ? ":" : " ";
 			var min = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes()
 			var amOrPm = d.getHours() >= 12 ? "pm" : "am";
-			document.getElementById("clock").innerText = hour + colon + min + amOrPm;
+			document.getElementById("clock").innerHTML = hour + colon + min + amOrPm;
 		}
 		
 		function setupCamera() {
