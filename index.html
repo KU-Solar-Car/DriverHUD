@@ -30,6 +30,9 @@
 			border: 2px solid gold;
 			padding: 0.5vh;
 		}
+		#clock {
+			font-family: monospace;
+		}
 		
 		/* Webcam is displayed at 4:3, despite actually being 16:9 */
 		#camera-container {
@@ -48,6 +51,21 @@
 		}
 	</style>
 	<script>
+		window.onload = function() {
+			clockTick();
+			setupCamera();
+			setInterval(clockTick, 1000);
+		}
+		
+		function clockTick() {
+			var d = new Date();
+			var hour = (d.getHours() < 10 ? " " : "") +  ((d.getHours() % 12) || 12);
+			var colon = d.getSeconds() % 2 ? ":" : " ";
+			var min = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes()
+			var amOrPm = d.getHours() >= 12 ? "pm" : "am";
+			document.getElementById("clock").innerText = hour + colon + min + amOrPm;
+		}
+		
 		function setupCamera() {
 			var camera = document.getElementById('camera');
 			
@@ -58,10 +76,10 @@
 		}
 	</script>
 </head>
-<body onload="setupCamera()">
+<body>
 	<div id="bg"></div>
 	<div id="info">
-		88 mph | 12:00 am | 93&deg;F | 53%
+		88 mph | <span id="clock">--:-- --</span> | 93&deg;F | 53%
 	</div>
 	<div id="camera-container">
 		<video id="camera"></video>
