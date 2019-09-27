@@ -12,7 +12,7 @@
 			setupCamera();
 			
 			var ticks = [];
-			for (var i = 0; i <= MAX_SPEED/10; i++) ticks[i] = i*10;
+			for (var i = 0; i <= MAX_SPEED/10; i++) ticks.push(i*10);
 			var speedometer = new Gauge(document.getElementById("speedometer")).setOptions({
 				angle: -0.2, // The span of the gauge arc
 				lineWidth: 0.44, // The line thickness
