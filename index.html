@@ -29,31 +29,113 @@
 			background: white;
 			border: 2px solid gold;
 			padding: 0.5vh;
-		}
-		#clock {
 			font-family: monospace;
 		}
-		
-		/* Webcam is displayed at 4:3, despite actually being 16:9 */
-		#camera-container {
+		#speedometer-container {
+			position: absolute;
+			top: 20vh;
+			left: 0;
+			width: 35vw;
+			height: 30vw;
+		}
+		#speedometer {
+			width: 100%;
+			height: 100%;
+		}
+		#speed {
+			position: absolute;
+			left: 0;
+			bottom: 2%;
+			width: 100%;
+			font: bold 72px sans-serif;
+			text-align: center;
+		}
+		#power-info {
 			position: absolute;
 			bottom: 3vh;
 			left: 0;
-			width: 100vw;
-			height: 75vh;
-			text-align: center;
+			width: 35vw;
+			height: 16vh;
+			font: 28px sans-serif;
 		}
+		td.label {
+			text-align: right;
+			padding-right: 0.2em;
+		}
+		.sensor {
+			display: inline-block;
+			font-family: monospace;
+			background: black;
+			color: white;
+			border: 1px solid gold;
+			border-radius: 8px;
+			padding: 0 4px 0 4px;
+		}
+		
+		/* Webcam is displayed at 4:3, despite actually being 16:9 */
 		#camera { 
-			width: 100vh; /* Note usage vh, not vw */
-			height: 75vh;
+			position: absolute;
+			bottom: 1vh;
+			right: 1vh;
+			text-align: right;
+			width: 110vh; /* Note usage of vh, not vw, to maintain camera aspect ratio */
+			height: 80vh; /* Height = 0.75*width */
 			border: 2px solid gold;
+			border-radius: 8px;
 			background: black url(images/no-camera.png) center/contain no-repeat;
 		}
 	</style>
+	<script src="gauge.min.js"></script> <!-- https://bernii.github.io/gauge.js/#?currval=1275&animationSpeed=16&angle=-20&lineWidth=44&radiusScale=100&pointer.length=60&pointer.color=EB0909&pointer.strokeWidth=35&fontSize=41&colorStart=6FADCF&colorStop=8FC0DA&strokeColor=E0E0E0&divisions=12&divLength=70&divColor=333333&divWidth=11&subDivisions=2&subLength=50&subColor=666666&subWidth=6 -->
 	<script>
+		const MAX_SPEED = 120; // mph, must be multiple of 10
+	
 		window.onload = function() {
 			clockTick();
-			setupCamera();
+			//setupCamera();
+			
+			var ticks = [];
+			for (var i = 0; i <= MAX_SPEED/10; i++) ticks[i] = i*10;
+			var speedometer = new Gauge(document.getElementById("speedometer")).setOptions({
+				angle: -0.2, // The span of the gauge arc
+				lineWidth: 0.44, // The line thickness
+				radiusScale: 0.8, // Relative radius
+				pointer: {
+					length: 0.8, // // Relative to gauge radius
+					strokeWidth: 0.035, // The thickness
+					color: '#EB0909' // Fill color
+				},
+				limitMax: true,     // If false, max value increases automatically if value > maxValue
+				limitMin: true,     // If true, the min value of the gauge will be fixed
+				colorStart: '#6FADCF',
+				colorStop: '#64ed6b', 
+				strokeColor: '#E0E0E0',
+				generateGradient: true,
+				highDpiSupport: true,     // High resolution support
+				// renderTicks is Optional
+				renderTicks: {
+					divisions: MAX_SPEED/10,
+					divWidth: 1.1,
+					divLength: 0.7,
+					divColor: '#333333',
+					subDivisions: 2,
+					subLength: 0.5,
+					subWidth: 0.6,
+					subColor: '#666666'
+				},
+				staticLabels: {
+					font: "24px sans-serif",  // Specifies font
+					labels: ticks,  // Print labels at these values
+					color: "#000000",  // Optional: Label text color
+					fractionDigits: 0  // Optional: Numerical precision. 0=round off.
+				},
+			});
+			speedometer.maxValue = MAX_SPEED;
+			speedometer.setMinValue(0);
+			speedometer.animationSpeed = 16;
+			speedometer.setTextField(document.getElementById("speed"));
+			
+			speedometer.set(88); // current speed
+			
 			setInterval(clockTick, 1000);
 		}
 		
@@ -80,10 +162,22 @@
 <body>
 	<div id="bg"></div>
 	<div id="info">
-		88 mph | <span id="clock">--:-- --</span> | 93&deg;F | 53%
+		<span id="clock">--:-- --</span> 53%
 	</div>
-	<div id="camera-container">
-		<video id="camera"></video>
+	<video id="camera"></video>
+	<div id="speedometer-container">
+		<canvas id="speedometer"></canvas>
+		<div id="speed"></div>
 	</div>
+	<table id="power-info">
+		<tr>
+			<td class="label">Battery voltage</td>
+			<td><span class="sensor">12.60 V</span></td>
+		</tr>
+		<tr>
+			<td class="label">Solar power</td>
+			<td><span class="sensor">400 W</span></td>
+		</tr>	
+	</table>
 </body>
 </html>
