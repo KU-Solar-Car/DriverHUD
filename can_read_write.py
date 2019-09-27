@@ -25,7 +25,7 @@ class FilteredBufferReader(can.BufferedReader):
         can.BufferedReader.__init__(self)
 
     def on_message_received(self, msg):
-        if msg.arbitration_id == REPLY_ID and msg.data[2] in PARAMETER_IDS.keys():
+        if msg.arbitration_id == REPLY_ID and msg.data[2] in PARAMETER_IDS:
             self.buffer.put(msg)
 
 
