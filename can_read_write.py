@@ -7,11 +7,11 @@ import sys
 import json
 from threading import Thread
 
-# info handled; specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
-# full list of PIDs at https://en.wikipedia.org/wiki/OBD-II_PIDs
-PIDS = {'VEHICLE_CHARGE': 0x2F,
-        'VEHICLE_SPEED': 0x0D,
-        }
+# info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
+# full list of Parameter IDs at https://en.wikipedia.org/wiki/OBD-II_PIDs
+PARAMETER_IDS = {'VEHICLE_CHARGE': 0x2F,
+                 'VEHICLE_SPEED': 0x0D,
+                }
 
 
 REQUEST_ID = 0x7DF
@@ -25,7 +25,7 @@ class FilteredBufferReader(can.BufferedReader):
         can.BufferedReader.__init__(self)
 
     def on_message_received(self, msg):
-        if msg.arbitration_id == REPLY_ID and msg.data[2] in PIDS.keys():
+        if msg.arbitration_id == REPLY_ID and msg.data[2] in PARAMETER_IDS.keys():
             self.buffer.put(msg)
 
 
@@ -35,10 +35,10 @@ def request_task():
     :return: None
     """
     requests = [can.Message(arbitration_id=REQUEST_ID,
-                            data=[0x02, 0x01, PIDS['VEHICLE_SPEED'], 0x00, 0x00, 0x00, 0x00, 0x00],
+                            data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_SPEED'], 0x00, 0x00, 0x00, 0x00, 0x00],
                             extended_id=False),
                 can.Message(arbitration_id=REQUEST_ID,
-                            data=[0x02, 0x01, PIDS['VEHICLE_CHARGE'], 0x00, 0x00, 0x00, 0x00, 0x00])]
+                            data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_CHARGE'], 0x00, 0x00, 0x00, 0x00, 0x00])]
 
     while True:
         for req_msg in requests:
@@ -52,9 +52,9 @@ def process_message(message):
     :param message: Message instance
     :return: None
     """
-    if message.data[2] == PIDS['VEHICLE_CHARGE']:
+    if message.data[2] == PARAMETER_IDS['VEHICLE_CHARGE']:
         data['charge'] = message.data[3]  # TODO: will sensors return value as percent (as expected?)
-    if message.data[2] == PIDS['VEHICLE_SPEED']:
+    if message.data[2] == PARAMETER_IDS['VEHICLE_SPEED']:
         data['speed'] = message.data[3] / 1.609  # convert km/h to miles/h
 
     with open(OUTPUT_PATH, 'w') as f:
