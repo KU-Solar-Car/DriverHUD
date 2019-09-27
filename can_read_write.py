@@ -11,11 +11,11 @@ from threading import Thread
 # full list of PIDs at https://en.wikipedia.org/wiki/OBD-II_PIDs
 PIDS = {'VEHICLE_CHARGE': 0x2F,
         'VEHICLE_SPEED': 0x0D,
-}
+        }
 
 
-PID_REQUEST = 0x7DF
-PID_REPLY = 0x7E8
+REQUEST_ID = 0x7DF
+REPLY_ID = 0x7E8
 
 OUTPUT_PATH = os.path.join(sys.path[0], 'data.json')
 
@@ -25,7 +25,7 @@ class FilteredBufferReader(can.BufferedReader):
         can.BufferedReader.__init__(self)
 
     def on_message_received(self, msg):
-        if msg.arbitration_id == PID_REPLY and msg.data[2] in PIDS.keys():
+        if msg.arbitration_id == REPLY_ID and msg.data[2] in PIDS.keys():
             self.buffer.put(msg)
 
 
@@ -34,10 +34,10 @@ def request_task():
     defines and sends messages to request vehicle info
     :return: None
     """
-    requests = [can.Message(arbitration_id=PID_REQUEST,
+    requests = [can.Message(arbitration_id=REQUEST_ID,
                             data=[0x02, 0x01, PIDS['VEHICLE_SPEED'], 0x00, 0x00, 0x00, 0x00, 0x00],
                             extended_id=False),
-                can.Message(arbitration_id=PID_REQUEST,
+                can.Message(arbitration_id=REQUEST_ID,
                             data=[0x02, 0x01, PIDS['VEHICLE_CHARGE'], 0x00, 0x00, 0x00, 0x00, 0x00])]
 
     while True:
