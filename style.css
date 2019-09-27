@@ -1,0 +1,81 @@
+* {
+	box-sizing: border-box;
+}
+html, body {
+	margin: 0;
+}
+#bg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: -100;
+	opacity: 0.3;
+	background: url(images/background.jpg) center/cover no-repeat;
+}
+#info {
+	position: absolute;
+	top: 3vh;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	font: 5vw sans-serif;
+	background: white;
+	border: 2px solid gold;
+	padding: 0.5vh;
+	font-family: monospace;
+}
+#speedometer-container {
+	position: absolute;
+	top: 20vh;
+	left: 0;
+	width: 35vw;
+	height: 30vw;
+}
+#speedometer {
+	width: 100%;
+	height: 100%;
+}
+#speed {
+	position: absolute;
+	left: 0;
+	bottom: 2%;
+	width: 100%;
+	font: bold 72px sans-serif;
+	text-align: center;
+}
+#power-info {
+	position: absolute;
+	bottom: 3vh;
+	left: 0;
+	width: 35vw;
+	height: 16vh;
+	font: 28px sans-serif;
+}
+td.label {
+	text-align: right;
+	padding-right: 0.2em;
+}
+.sensor {
+	display: inline-block;
+	font-family: monospace;
+	background: black;
+	color: white;
+	border: 1px solid gold;
+	border-radius: 8px;
+	padding: 0 4px 0 4px;
+}
+
+/* Webcam is displayed at 4:3, despite actually being 16:9 */
+#camera { 
+	position: absolute;
+	bottom: 1vh;
+	right: 1vh;
+	text-align: right;
+	width: 110vh; /* Note usage of vh, not vw, to maintain camera aspect ratio */
+	height: 80vh; /* Height = 0.75*width */
+	border: 2px solid gold;
+	border-radius: 8px;
+	background: black url(images/no-camera.png) center/contain no-repeat;
+}
