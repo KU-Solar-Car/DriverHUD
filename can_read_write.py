@@ -29,7 +29,7 @@ class FilteredBufferReader(can.BufferedReader):
             self.buffer.put(msg)
 
 
-def request_task():
+def request_data():
     """
     defines and sends messages to request vehicle info
     :return: None
@@ -77,7 +77,7 @@ data = {'speed': 0,
         'charge': 0}
 
 # create thread for sending requests
-rt = Thread(target=request_task)
+rt = Thread(target=request_data)
 rt.start()
 
 reader = FilteredBufferReader()
