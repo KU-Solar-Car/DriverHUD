@@ -9,7 +9,7 @@ from threading import Thread
 
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
 # full list of Parameter IDs at https://en.wikipedia.org/wiki/OBD-II_PIDs
-PARAMETER_IDS = {'VEHICLE_CHARGE': 0x2F,
+PARAMETER_IDS = {'VEHICLE_BATTERY_PERCENT': 0x2F,
                  'VEHICLE_SPEED': 0x0D,
                 }
 
@@ -38,7 +38,7 @@ def request_data():
                             data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_SPEED'], 0x00, 0x00, 0x00, 0x00, 0x00],
                             extended_id=False),
                 can.Message(arbitration_id=REQUEST_ID,
-                            data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_CHARGE'], 0x00, 0x00, 0x00, 0x00, 0x00])]
+                            data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_BATTERY_PERCENT'], 0x00, 0x00, 0x00, 0x00, 0x00])]
 
     while True:
         for req_msg in requests:
@@ -52,8 +52,8 @@ def process_message(message):
     :param message: Message instance
     :return: None
     """
-    if message.data[2] == PARAMETER_IDS['VEHICLE_CHARGE']:
-        data['charge'] = message.data[3]  # TODO: will sensors return value as percent (as expected?)
+    if message.data[2] == PARAMETER_IDS['VEHICLE_BATTERY_PERCENT']:
+        data['battery_percent'] = message.data[3]  # TODO: will sensors return value as percent (as expected?)
     if message.data[2] == PARAMETER_IDS['VEHICLE_SPEED']:
         data['speed'] = message.data[3] / 1.609  # convert km/h to miles/h
 
@@ -74,7 +74,7 @@ except OSError:
 
 # initialize data
 data = {'speed': 0,
-        'charge': 0}
+        'battery_percent': 0}
 
 # create thread for sending requests
 rt = Thread(target=request_data)
