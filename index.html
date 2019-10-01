@@ -6,14 +6,24 @@
 	<script src="gauge.min.js"></script>
 	<script type="text/javascript">
 		const MAX_SPEED = 120; // mph, must be multiple of 10
+		const SENSOR_FILE = "data.json";
+		var speedometer;
 	
 		window.onload = function() {
 			clockTick();
-			setupCamera();
+			readSensors();
 			
+			initCamera();
+			initSpeedometer();
+			
+			setInterval(clockTick, 1000);
+			setInterval(readSensors, 100); // Polling rate TBC
+		}
+		
+		function initSpeedometer() {
 			var ticks = [];
 			for (var i = 0; i <= MAX_SPEED/10; i++) ticks.push(i*10);
-			var speedometer = new Gauge(document.getElementById("speedometer")).setOptions({
+			speedometer = new Gauge(document.getElementById("speedometer")).setOptions({
 				angle: -0.2, // The span of the gauge arc
 				lineWidth: 0.44, // The line thickness
 				radiusScale: 0.8, // Relative radius
@@ -51,10 +61,16 @@
 			speedometer.setMinValue(0);
 			speedometer.animationSpeed = 16;
 			speedometer.setTextField(document.getElementById("speed"));
+			speedometer.set(0);
+		}
+		
+		function initCamera() {
+			var camera = document.getElementById('camera');
 			
-			speedometer.set(88); // current speed
-			
-			setInterval(clockTick, 1000);
+			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
+				camera.srcObject = stream;
+				camera.play();
+			});
 		}
 		
 		function clockTick() {
@@ -67,20 +83,26 @@
 			document.getElementById("clock").innerHTML = hour + colon + min + amOrPm;
 		}
 		
-		function setupCamera() {
-			var camera = document.getElementById('camera');
-			
-			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
-				camera.srcObject = stream;
-				camera.play();
-			});
+		function readSensors() {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var data = JSON.parse(this.responseText);
+					speedometer.set(data.speed);
+					document.getElementById("battery-percent").innerText = data.battery_percent;
+				} else {
+					// Display error to driver?
+				}
+			};
+			xhttp.open("GET", SENSOR_FILE + "?" + Date.now(), true);// Date.now() prevents caching
+			xhttp.send();
 		}
 	</script>
 </head>
-<body>
+<body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
 	<div id="bg"></div>
 	<div id="info">
-		<span id="clock">--:-- --</span> 53%
+		<span id="clock">--:-- --</span> <span id="battery-percent">--</span>%
 	</div>
 	<video id="camera"></video>
 	<div id="speedometer-container">
