@@ -88,9 +88,11 @@
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					var data = JSON.parse(this.responseText);
-					speedometer.set(data.speed);
-					document.getElementById("battery-percent").innerText = data.battery_percent;
-					document.getElementById("error").style.display = data.bps_error ? "block" : "none";
+					for (var property in data) {
+						speedometer.set(data.speed);
+						document.getElementById("battery-percent").innerText = data.battery_percent;
+						document.getElementById("error").style.display = data.bps_error ? "block" : "none";
+					}
 				} else {
 					// Display error to driver?
 				}
@@ -115,8 +117,8 @@
 	</div>
 	<table id="power-info">
 		<tr>
-			<td class="label">Battery voltage</td>
-			<td><span class="sensor">12.60 V</span></td>
+			<td class="label">Battery temperature</td>
+			<td><span class="sensor">60&deg;C</span></td>
 		</tr>
 		<tr>
 			<td class="label">Solar power</td>
