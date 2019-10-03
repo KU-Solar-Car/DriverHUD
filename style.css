@@ -15,6 +15,17 @@ html, body {
 	background: url(images/background.jpg) center/cover no-repeat;
 	transform: scaleX(-1); /* Flip image horizontally */
 }
+#error {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	text-align: center;
+	color: white;
+	font: bold 48px sans-serif;
+	background: red;
+}
 #info, #power-info {
 	width: 34vw;
 	left: 1vw;
