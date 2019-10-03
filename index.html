@@ -90,11 +90,12 @@
 					var data = JSON.parse(this.responseText);
 					speedometer.set(data.speed);
 					document.getElementById("battery-percent").innerText = data.battery_percent;
+					document.getElementById("error").style.display = data.bps_error ? "block" : "none";
 				} else {
 					// Display error to driver?
 				}
 			};
-			xhttp.open("GET", SENSOR_FILE + "?" + Date.now(), true);// Date.now() prevents caching
+			xhttp.open("GET", SENSOR_FILE + "?" + Date.now(), true); // Date.now() prevents caching
 			xhttp.send();
 		}
 	</script>
