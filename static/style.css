@@ -25,6 +25,7 @@ html, body {
 	color: white;
 	font: bold 48px sans-serif;
 	background: red;
+	z-index: 1000;
 }
 #info, #power-info {
 	width: 34vw;
@@ -93,4 +94,12 @@ td.label {
 	border-radius: 8px;
 	background: black url(images/no-camera.png) center/contain no-repeat;
 	z-index: 10;
+}
+
+#logo {
+	position: absolute;
+	top: 0;
+	width: 100vw;
+	height: 10vh;
+	object-fit: contain;
 }
