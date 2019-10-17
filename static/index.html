@@ -6,22 +6,20 @@
 	<script src="gauge.min.js"></script>
 	<script type="text/javascript">
 		const MAX_SPEED = 120; // mph, must be multiple of 10
-		const SPEED_ENDPOINT = "/get-speed";
-		const SENSORS_ENDPOINT = "/get-sensors";
 		
 		var speedometer;
 	
-		window.onload = function() {
-			clockTick();
-			readSpeed();
-			readSensors();
-			
+		window.onload = () => {
 			initCamera();
 			initSpeedometer();
 			
+			clockTick();
+			updateSpeed();
+			updateBatteryPercent();
+			
 			setInterval(clockTick, 1000);
-			setInterval(readSpeed, 100); // Polling rate TBC
-			setInterval(readSensors, 1000);
+			setInterval(updateSpeed, 100);
+			setInterval(updateBatteryPercent, 1000);
 		}
 		
 		function initSpeedometer() {
@@ -87,34 +85,30 @@
 			document.getElementById("clock").innerHTML = hour + colon + min + amOrPm;
 		}
 		
-		function readSpeed() {
+		function readSensor(endpoint, callback) {
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
-					var data = JSON.parse(this.responseText);
-					speedometer.set(data.speed);
+					callback(this.responseText);
 				} else {
 					// Display error to driver?
 				}
 			};
-			xhttp.open("GET", SPEED_ENDPOINT + "?" + Date.now(), true); // Date.now() prevents caching
+			xhttp.open("GET", endpoint + "?" + Date.now(), true); // Date.now() prevents caching
 			xhttp.send();
 		}
 		
-		function readSensors() { // Everything but speed, runs less frequently
-			var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					var data = JSON.parse(this.responseText);
-					document.getElementById("battery-percent").innerText = data.battery_percent;
-					document.getElementById("error").style.display = data.bps_error ? "block" : "none";
-				} else {
-					// Display error to driver?
-				}
-			};
-			xhttp.open("GET", SENSORS_ENDPOINT + "?" + Date.now(), true); // Date.now() prevents caching
-			xhttp.send();
+		function updateSpeed() {
+			readSensor("/get-speed", speed => speedometer.set(speed));
 		}
+		function updateBatteryPercent() {
+			readSensor("/get-battery-percent", percent => document.getElementById("battery-percent").innerText = percent);
+		}
+		
+		// Not yet implemented in Flask
+		/*function updateError() {
+			readSensor("/get-bps-error", error => document.getElementById("error").style.display = error ? "block" : "none");
+		}*/
 	</script>
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
