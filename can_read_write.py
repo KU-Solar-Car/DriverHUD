@@ -1,69 +1,34 @@
 # This scipt must run on Pi startup
 
+from flask import Flask
 import can
-import time
-import os
 import sys
-import json
-from threading import Thread
+import queue
 
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
 # full list of Parameter IDs at https://en.wikipedia.org/wiki/OBD-II_PIDs
 PARAMETER_IDS = {'VEHICLE_BATTERY_PERCENT': 0x2F,
                  'VEHICLE_SPEED': 0x0D,
-                }
+                 }
 
 
 REQUEST_ID = 0x7DF
 REPLY_ID = 0x7E8
 
-OUTPUT_PATH = os.path.join(sys.path[0], 'data.json')
-
 
 class FilteredBufferReader(can.BufferedReader):
-    def __init__(self):
+    def __init__(self, filter_parameter):
+        """
+        :param filter_parameter: from PARAMETER_IDS
+        """
         can.BufferedReader.__init__(self)
+        self.buffer = queue.Queue(0)
+        self.filter_parameter = filter_parameter
 
     def on_message_received(self, msg):
-        if msg.arbitration_id == REPLY_ID and msg.data[2] in PARAMETER_IDS:
+        if msg.arbitration_id == REPLY_ID and msg.data[2] == self.filter_parameter:
             self.buffer.put(msg)
 
-
-def request_data():
-    """
-    defines and sends messages to request vehicle info
-    :return: None
-    """
-    requests = [can.Message(arbitration_id=REQUEST_ID,
-                            data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_SPEED'], 0x00, 0x00, 0x00, 0x00, 0x00],
-                            extended_id=False),
-                can.Message(arbitration_id=REQUEST_ID,
-                            data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_BATTERY_PERCENT'], 0x00, 0x00, 0x00, 0x00, 0x00])]
-
-    while True:
-        for req_msg in requests:
-            bus.send(req_msg)
-            time.sleep(0.05)
-
-
-def process_message(message):
-    """
-    write data from msg to json file in script parent directory
-    :param message: Message instance
-    :return: None
-    """
-    if message.data[2] == PARAMETER_IDS['VEHICLE_BATTERY_PERCENT']:
-        data['battery_percent'] = message.data[3]  # TODO: will sensors return value as percent (as expected?)
-    if message.data[2] == PARAMETER_IDS['VEHICLE_SPEED']:
-        data['speed'] = message.data[3] / 1.609  # convert km/h to miles/h
-
-    with open(OUTPUT_PATH, 'w') as f:
-        json.dump(data, f)
-
-
-# Bring up can0 interface at 500kbps
-os.system("sudo /sbin/ip link set can0 up type can bitrate 500000")
-time.sleep(0.1)
 
 # establish interface w CAN BUS
 try:
@@ -72,23 +37,43 @@ except OSError:
     print('Cannot find PiCan board')
     sys.exit()
 
-# initialize data
-data = {'speed': 0,
-        'battery_percent': 0}
+# BUS readers filter and queue messages for reading
+speed_reader = FilteredBufferReader([PARAMETER_IDS['VEHICLE_SPEED']])
+battery_percent_reader = FilteredBufferReader(PARAMETER_IDS['VEHICLE_BATTERY_PERCENT'])
 
-# create thread for sending requests
-rt = Thread(target=request_data)
-rt.start()
+# notifier distributes messages to readers
+notifier = can.Notifier(bus,
+                        listeners=[speed_reader, battery_percent_reader],
+                        timeout=5.0)
 
-reader = FilteredBufferReader()
+app = Flask(__name__)
 
-# main loop
-try:
-    while True:
-        msg = reader.get_message()
-        if msg:
-            process_message(msg)
 
-except Exception as e:
-    os.system("sudo /sbin/ip link set can0 down")
-    print(e)
+@app.route('get-speed')
+def get_speed():
+    bus.send(can.Message(arbitration_id=REQUEST_ID,
+             data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_SPEED'], 0x00, 0x00, 0x00, 0x00, 0x00],
+             extended_id=False))
+
+    rec_msg = speed_reader.get_message()  # returns None if timeout
+
+    # for debug, TODO: remove for production
+    if rec_msg:
+        speed = rec_msg.data[3] / 1.609  # km/h to mi/h
+        return speed
+    else:
+        return -1
+
+
+@app.route('get-battery-percent')
+def get_battery_percent():
+    bus.send(can.Message(arbitration_id=REQUEST_ID,
+                         data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_BATTERY_PERCENT'], 0x00, 0x00, 0x00, 0x00, 0x00]))
+
+    rec_msg = battery_percent_reader.get_message()
+
+    # for debug, TODO: remove for production
+    if rec_msg:
+        return rec_msg.data[3]
+    else:
+        return -1
