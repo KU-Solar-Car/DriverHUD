@@ -1,3 +1,4 @@
+#!/usr/bin/env/ python3
 # This scipt must run on Pi startup
 
 from flask import Flask
@@ -32,7 +33,8 @@ class FilteredBufferReader(can.BufferedReader):
 
 # establish interface w CAN BUS
 try:
-    bus = can.interface.Bus(channel='can0')
+    bus = can.interface.Bus(channel='can0', bustype='socketcan_native')
+
 except OSError:
     print('Cannot find PiCan board')
     sys.exit()
@@ -49,7 +51,7 @@ notifier = can.Notifier(bus,
 app = Flask(__name__)
 
 
-@app.route('get-speed')
+@app.route('/get-speed')
 def get_speed():
     bus.send(can.Message(arbitration_id=REQUEST_ID,
              data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_SPEED'], 0x00, 0x00, 0x00, 0x00, 0x00],
@@ -65,7 +67,7 @@ def get_speed():
         return -1
 
 
-@app.route('get-battery-percent')
+@app.route('/get-battery-percent')
 def get_battery_percent():
     bus.send(can.Message(arbitration_id=REQUEST_ID,
                          data=[0x02, 0x01, PARAMETER_IDS['VEHICLE_BATTERY_PERCENT'], 0x00, 0x00, 0x00, 0x00, 0x00]))
@@ -77,3 +79,7 @@ def get_battery_percent():
         return rec_msg.data[3]
     else:
         return -1
+
+
+if __name__ == '__main__':
+    app.run()
