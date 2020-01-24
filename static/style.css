@@ -23,12 +23,12 @@ html, body {
 	width: 100vw;
 	text-align: center;
 	color: white;
-	font: bold 48px sans-serif;
+	font: bold 5vw sans-serif;
 	background: red;
 	z-index: 1000;
 }
 #info, #power-info {
-	width: 34vw;
+	width: 32vw;
 	left: 1vw;
 	border: 2px solid gold;
 	border-width: 2px 0 2px 2px;
@@ -39,7 +39,7 @@ html, body {
 	position: absolute;
 	top: 11vh;
 	text-align: center;
-	font: 48px sans-serif;
+	font: 5vw sans-serif;
 	padding: 0.5vh;
 	font-family: monospace;
 }
@@ -47,7 +47,7 @@ html, body {
 	position: absolute;
 	top: 23vh;
 	left: 0;
-	width: 35vw;
+	width: 33vw;
 	height: 30vw;
 }
 #speedometer {
@@ -59,14 +59,14 @@ html, body {
 	left: 0;
 	bottom: 2%;
 	width: 100%;
-	font: bold 72px sans-serif;
+	font: bold 8vw sans-serif;
 	text-align: center;
 }
 #power-info {
 	position: absolute;
 	bottom: 11vh;
 	height: 16vh;
-	font: 26px sans-serif;
+	font: 2.5vw sans-serif;
 }
 td.label {
 	text-align: right;
