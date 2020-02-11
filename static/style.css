@@ -3,6 +3,7 @@
 }
 html, body {
 	margin: 0;
+	overflow: hidden;
 }
 #bg {
 	position: absolute;
@@ -28,27 +29,25 @@ html, body {
 	z-index: 1000;
 }
 #info, #power-info {
-	width: 32vw;
-	left: 1vw;
-	border: 2px solid gold;
-	border-width: 2px 0 2px 2px;
-	background: white;
-	border-radius: 8px 0 0 8px;
+	width: 40vw;
+	right: 1vw;
 }
 #info {
 	position: absolute;
-	top: 11vh;
+	top: 2vh;
 	text-align: center;
-	font: 5vw sans-serif;
+	font: 10vw sans-serif;
 	padding: 0.5vh;
 	font-family: monospace;
+	font-weight: bold;
+	-webkit-text-stroke: 2px white;
 }
 #speedometer-container {
 	position: absolute;
-	top: 23vh;
-	left: 0;
-	width: 33vw;
-	height: 30vw;
+	top: 8vh;
+	left: 1vw;
+	width: 55vw;
+	height: 50vw;
 }
 #speedometer {
 	width: 100%;
@@ -59,14 +58,17 @@ html, body {
 	left: 0;
 	bottom: 2%;
 	width: 100%;
-	font: bold 8vw sans-serif;
+	font: bold 12vw sans-serif;
 	text-align: center;
 }
 #power-info {
 	position: absolute;
-	bottom: 11vh;
+	top: 43vh;
 	height: 16vh;
-	font: 2.5vw sans-serif;
+	font: 3vw sans-serif;
+	border: 2px solid gold;
+	background: white;
+	border-radius: 8px;
 }
 td.label {
 	text-align: right;
@@ -84,22 +86,16 @@ td.label {
 
 /* Webcam is displayed at 4:3, despite actually being 16:9 */
 #camera { 
-	position: absolute;
-	top: 10vh;
-	right: 1vw;
-	text-align: right;
-	width: 110vh; /* Note usage of vh, not vw, to maintain camera aspect ratio */
-	height: 80vh; /* Height = 0.75*width */
-	border: 2px solid gold;
-	border-radius: 8px;
+	width: 100vw;
+	height: 100vh;
 	background: black url(images/no-camera.png) center/contain no-repeat;
-	z-index: 10;
 }
 
 #logo {
 	position: absolute;
-	top: 0;
-	width: 100vw;
-	height: 10vh;
+	bottom: 5vh;
+	right: 1vw;
+	width: 40vw;
+	height: 30vh;
 	object-fit: contain;
 }
