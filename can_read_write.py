@@ -62,9 +62,9 @@ def get_speed():
     # for debug, TODO: remove for production
     if rec_msg:
         speed = rec_msg.data[3] / 1.609  # km/h to mi/h
-        return speed
+        return str(speed)
     else:
-        return -1
+        return str(-1)
 
 
 @app.route('/get-battery-percent')
@@ -76,9 +76,9 @@ def get_battery_percent():
 
     # for debug, TODO: remove for production
     if rec_msg:
-        return rec_msg.data[3]
+        return str(rec_msg.data[3])
     else:
-        return -1
+        return str(-1)
 
 
 if __name__ == '__main__':
