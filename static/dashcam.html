@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Driver HUD</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript">
+		window.onload = () => {
+			var camera = document.getElementById('camera');
+			
+			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
+				camera.srcObject = stream;
+				camera.play();
+			});
+		}
+	</script>
+</head>
+<body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
+	<video id="camera"></video>
+</body>
+</html>

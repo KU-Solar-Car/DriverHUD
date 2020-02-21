@@ -10,7 +10,6 @@
 		var speedometer;
 	
 		window.onload = () => {
-			initCamera();
 			initSpeedometer();
 			
 			clockTick();
@@ -28,7 +27,7 @@
 			speedometer = new Gauge(document.getElementById("speedometer")).setOptions({
 				angle: -0.2, // The span of the gauge arc
 				lineWidth: 0.44, // The line thickness
-				radiusScale: 0.8, // Relative radius
+				radiusScale: 0.75, // Relative radius, change this if clipping off canvas
 				pointer: {
 					length: 0.8, // // Relative to gauge radius
 					strokeWidth: 0.035, // The thickness
@@ -53,7 +52,7 @@
 					subColor: '#666666'
 				},
 				staticLabels: {
-					font: "24px sans-serif",  // Specifies font
+					font: "4vw sans-serif",  // Specifies font
 					labels: ticks,  // Print labels at these values
 					color: "#000000",  // Optional: Label text color
 					fractionDigits: 0  // Optional: Numerical precision. 0=round off.
@@ -65,16 +64,7 @@
 			speedometer.setTextField(document.getElementById("speed"));
 			speedometer.set(0);
 		}
-		
-		function initCamera() {
-			var camera = document.getElementById('camera');
-			
-			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
-				camera.srcObject = stream;
-				camera.play();
-			});
-		}
-		
+
 		function clockTick() {
 			var d = new Date();
 			var hour = ((d.getHours() % 12) || 12);
@@ -118,9 +108,8 @@
 		BPS Fault
 	</div>
 	<div id="info">
-		<span id="clock">--:-- --</span> <span id="battery-percent">--</span>%
+		<span id="clock">--:-- --</span><br><span id="battery-percent">--</span>%
 	</div>
-	<video id="camera"></video>
 	<div id="speedometer-container">
 		<canvas id="speedometer"></canvas>
 		<div id="speed"></div>
