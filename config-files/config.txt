@@ -1,0 +1,28 @@
+#########################################################################################
+# THIS IS NOT A COMPLETE FILE. THIS SHOULD BE APPENDED TO THE EXISTING /boot/config.txt #
+#########################################################################################
+
+# SETUP DRIVERHUD DISPLAY: 1024x600
+#hdmi_group=2
+#hdmi_mode=1
+#hdmi_mode=87
+#hdmi_cvt 1024 600 60 6 0 0 0
+
+# SETUP DRIVERHUD DISPLAY: 2x 800x480
+hdmi_force_hotplug=1
+max_usb_current=1
+hdmi_drive=1
+hdmi_group=2
+hdmi_mode=1
+hdmi_mode=87
+hdmi_cvt 800 480 60 6 0 0 0
+dtoverlay=ads7846,cs=1,penirq=25,penirq_pull=2,-speed=50000,keep_vref_on=0,swapxy=0,pmax=255,xohms=150,xmin=200,xmax=3900,ymin=200,ymax=3900
+display_rotate=0
+
+# Second display (not sure how many of these commands are actually required)
+hdmi_force_hotplug:1=1
+hdmi_drive:1=1
+hdmi_group:1=2
+hdmi_mode:1=87
+hdmi_cvt:1 800 480 60 6 0 0 0
+
