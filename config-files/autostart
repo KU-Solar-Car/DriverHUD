@@ -1,0 +1,7 @@
+@xset s off
+@xset -dpms
+@xset s noblank
+#@chromium-browser http://localhost:5000/static/index.html --kiosk --new-window --user-data-dir=/tmp/browser1
+#@chromium-browser http://localhost:5000/static/dashcam.html --kiosk --new-window --window-position="800,0" --user-data-dir=/tmp/browser2
+@/home/pi/start-hud.sh
+@unclutter -idle 0
