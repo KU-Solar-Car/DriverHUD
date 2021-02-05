@@ -15,9 +15,11 @@
 			clockTick();
 			updateSpeed();
 			updateBatteryPercent();
+			updateTemp();
 			
 			setInterval(clockTick, 1000);
 			setInterval(updateSpeed, 100);
+			setInterval(updateTemp, 1000);
 			setInterval(updateBatteryPercent, 1000);
 		}
 		
@@ -95,6 +97,10 @@
 			readSensor("/get-battery-percent", percent => document.getElementById("battery-percent").innerText = percent);
 		}
 		
+		function updateTemp() {
+			readSensor("/get-temperature", temp => document.getElementById("temperature").innerHTML = temp + "&deg;C");
+		}
+
 		// Not yet implemented in Flask
 		/*function updateError() {
 			readSensor("/get-bps-error", error => document.getElementById("error").style.display = error ? "block" : "none");
@@ -117,7 +123,7 @@
 	<table id="power-info">
 		<tr>
 			<td class="label">Battery temperature</td>
-			<td><span class="sensor">60&deg;C</span></td>
+			<td><span class="sensor" id="temperature">60&deg;C</span></td>
 		</tr>
 		<tr>
 			<td class="label">Solar power</td>
