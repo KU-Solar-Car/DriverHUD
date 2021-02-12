@@ -2,10 +2,13 @@
 # This script must run on Pi startup
 
 from flask import Flask
-import can
 import os
-import sys
 import queue
+import re
+import serial
+from serial.threaded import LineReader, ReaderThread
+import sys
+from threading import Thread
 import time
 
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
@@ -15,17 +18,19 @@ stats = {
     "temp": 0
 }
 
+temp_re = re.compile(r'Temp: (\d+)')
+soc_re = re.compile(r'SOC: (\d+)')
+
+class ArduinoSerial(LineReader):
+    def handle_line(self, line):
+        sys.stdout.write(line)
+        if temp_re.match(line):
+            stats["temp"] = int(temp_re.match(line).group(1))
+        
+        if soc_re.match(line):
+            stats["soc"] = int(soc_re.match(line).group(1))
+
 app = Flask(__name__)
-
-class DataListener(can.Listener):
-    def __init__(self):
-        pass
-
-    def on_message_received(self, msg):
-        if msg.arbitration_id == 0x6B0:
-            stats["soc"] = msg.data[6] / 2
-        if msg.arbitration_id == 0x6B1:
-            stats["temp"] = msg.data[6]
 
 @app.route('/get-speed')
 def get_speed():
@@ -33,6 +38,10 @@ def get_speed():
 
 @app.route('/get-battery-percent')
 def get_battery_percent():
+    line = ser.readline()
+    line = line.decode('utf-8').strip()
+    if soc_re.match(line):
+        stats["soc"] = int(soc_re.match(line).group(1))
     return str(stats["soc"])
 
 @app.route('/get-temperature')
@@ -40,19 +49,14 @@ def get_temperature():
     return str(stats["temp"])
 
 if __name__ == '__main__':
-    # BUS readers filter and queue messages for reading
-	try:
-		bus = can.interface.Bus(channel='can0', bustype='socketcan_native', bitrate=250000)
-		# establish interface w CAN BUS
-		reader = DataListener()
-		notifier = can.Notifier(bus,
-						listeners=[reader],
-						timeout=5.0)
-
-		print("Started can network")
-
-	except OSError:
-		print('Cannot find PiCan board')
-		sys.exit()
-
-    app.run()
+    ser = serial.Serial('/dev/ttyACM0', 115200) 
+    """
+    t2 = Thread(target=readSerial, args=(ser))
+    t2.start()
+    t1 = Thread(target=app.run)
+    t1.start()
+    """
+    ReaderThread(ser, ArduinoSerial).run()
+    #app.run(debug=False, use_reloader=False)
+    #while True:
+    #    print(ser.readline())
