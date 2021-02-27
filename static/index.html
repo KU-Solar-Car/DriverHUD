@@ -5,27 +5,23 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script src="gauge.min.js"></script>
 	<script type="text/javascript">
-		const MAX_SPEED = 120; // mph, must be multiple of 10
+		const MAX_SPEED = 60; // mph, must be multiple of 10
 		
-		var speedometer;
+		let speedometer;
 	
 		window.onload = () => {
 			initSpeedometer();
 			
 			clockTick();
-			updateSpeed();
-			updateBatteryPercent();
-			updateTemp();
+			updateData();
 			
 			setInterval(clockTick, 1000);
-			setInterval(updateSpeed, 100);
-			setInterval(updateTemp, 1000);
-			setInterval(updateBatteryPercent, 1000);
+			setInterval(updateData, 100);
 		}
 		
 		function initSpeedometer() {
-			var ticks = [];
-			for (var i = 0; i <= MAX_SPEED/10; i++) ticks.push(i*10);
+			let ticks = [];
+			for (let i = 0; i <= MAX_SPEED/10; i++) ticks.push(i*10);
 			speedometer = new Gauge(document.getElementById("speedometer")).setOptions({
 				angle: -0.2, // The span of the gauge arc
 				lineWidth: 0.44, // The line thickness
@@ -68,20 +64,20 @@
 		}
 
 		function clockTick() {
-			var d = new Date();
-			var hour = ((d.getHours() % 12) || 12);
+			let d = new Date();
+			let hour = ((d.getHours() % 12) || 12);
 			//hour = (hour < 10 ? "&nbsp;" : "") + hour; // Pad hour
-			var colon = d.getSeconds() % 2 ? ":" : " ";
-			var min = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes()
-			var amOrPm = d.getHours() >= 12 ? "pm" : "am";
+			let colon = d.getSeconds() % 2 ? ":" : " ";
+			let min = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes()
+			let amOrPm = d.getHours() >= 12 ? "pm" : "am";
 			document.getElementById("clock").innerHTML = hour + colon + min + amOrPm;
 		}
 		
 		function readSensor(endpoint, callback) {
-			var xhttp = new XMLHttpRequest();
+			let xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
-					callback(this.responseText);
+					callback(this.response);
 				} else {
 					// Display error to driver?
 				}
@@ -89,16 +85,16 @@
 			xhttp.open("GET", endpoint + "?" + Date.now(), true); // Date.now() prevents caching
 			xhttp.send();
 		}
-		
-		function updateSpeed() {
-			readSensor("/get-speed", speed => speedometer.set(speed));
-		}
-		function updateBatteryPercent() {
-			readSensor("/get-battery-percent", percent => document.getElementById("battery-percent").innerText = percent);
-		}
-		
-		function updateTemp() {
-			readSensor("/get-temperature", temp => document.getElementById("temperature").innerHTML = temp + "&deg;C");
+
+		function populateData(data) {
+			console.log(data)
+			speedometer.set(0) //data["speed"])
+			document.getElementById("battery-percent").innerText = data["soc"]
+			document.getElementById("temperature").innerHTML = data["temp"] + "&deg;C"
+		} 
+
+		function updateData() {
+			readSensor("/get-data", data => populateData(JSON.parse(data)));
 		}
 
 		// Not yet implemented in Flask
