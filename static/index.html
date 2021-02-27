@@ -2,16 +2,10 @@
 <html>
 <head>
 	<title>Driver HUD</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<script src="gauge.min.js"></script>
 	<script type="text/javascript">
-		const MAX_SPEED = 60; // mph, must be multiple of 10
-		
-		let speedometer;
-	
 		window.onload = () => {
-			initSpeedometer();
-			
 			clockTick();
 			updateData();
 			
@@ -19,50 +13,6 @@
 			setInterval(updateData, 100);
 		}
 		
-		function initSpeedometer() {
-			let ticks = [];
-			for (let i = 0; i <= MAX_SPEED/10; i++) ticks.push(i*10);
-			speedometer = new Gauge(document.getElementById("speedometer")).setOptions({
-				angle: -0.2, // The span of the gauge arc
-				lineWidth: 0.44, // The line thickness
-				radiusScale: 0.75, // Relative radius, change this if clipping off canvas
-				pointer: {
-					length: 0.8, // // Relative to gauge radius
-					strokeWidth: 0.035, // The thickness
-					color: '#EB0909' // Fill color
-				},
-				limitMax: true,     // If false, max value increases automatically if value > maxValue
-				limitMin: true,     // If true, the min value of the gauge will be fixed
-				colorStart: '#48a84c',
-				colorStop: '#64ed6b', 
-				strokeColor: '#E0E0E0',
-				generateGradient: true,
-				highDpiSupport: true,     // High resolution support
-				// renderTicks is Optional
-				renderTicks: {
-					divisions: MAX_SPEED/10,
-					divWidth: 1.1,
-					divLength: 0.7,
-					divColor: '#333333',
-					subDivisions: 2,
-					subLength: 0.5,
-					subWidth: 0.6,
-					subColor: '#666666'
-				},
-				staticLabels: {
-					font: "4vw sans-serif",  // Specifies font
-					labels: ticks,  // Print labels at these values
-					color: "#000000",  // Optional: Label text color
-					fractionDigits: 0  // Optional: Numerical precision. 0=round off.
-				},
-			});
-			speedometer.maxValue = MAX_SPEED;
-			speedometer.setMinValue(0);
-			speedometer.animationSpeed = 16;
-			speedometer.setTextField(document.getElementById("speed"));
-			speedometer.set(0);
-		}
-
 		function clockTick() {
 			let d = new Date();
 			let hour = ((d.getHours() % 12) || 12);
@@ -87,10 +37,9 @@
 		}
 
 		function populateData(data) {
-			console.log(data)
-			speedometer.set(0) //data["speed"])
-			document.getElementById("battery-percent").innerText = data["soc"]
-			document.getElementById("temperature").innerHTML = data["temp"]
+			console.log(data);
+			document.getElementById("battery-percent").innerText = data["soc"];
+			document.getElementById("temperature").innerHTML = data["temp"];
 		} 
 
 		function updateData() {
@@ -104,27 +53,13 @@
 	</script>
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
-	<div id="bg"></div>
-	<img id="logo" src="images/logo.png">
-	<div id="error">
-		BPS Fault
+	<div class="grid">
+		<div class="dataViewer" id="time">
+			<span id="clock"></span>
+		</div>
+		<div class="dataViewer" id="soc">
+			<span id="battery-percent"></span>%
+		</div>
 	</div>
-	<div id="info">
-		<span id="clock">--:-- --</span><br><span id="battery-percent">--</span>%
-	</div>
-	<div id="speedometer-container">
-		<canvas id="speedometer"></canvas>
-		<div id="speed"></div>
-	</div>
-	<table id="power-info">
-		<tr>
-			<td class="label">Battery temperature</td>
-			<td><span class="sensor" id="temperature">60</span>&deg;C</td>
-		</tr>
-		<tr>
-			<td class="label">Solar power</td>
-			<td><span class="sensor">400</span>W</td>
-		</tr>	
-	</table>
 </body>
 </html>
