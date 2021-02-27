@@ -30,10 +30,12 @@ app.logger.addHandler(handler)
 def get_data():
     #read_serial()
     line = ser.readline().decode("utf-8")
-    app.logger.error(line)
     if line:
         line = line.strip()
-        stats["soc"], stats["temp"] = line.split()
+        if len(line.split()) == 2:
+            stats["soc"], stats["temp"] = line.split()
+        else:
+            app.logger.error(line)
     return json.dumps(stats)
 
 if __name__ == '__main__':
