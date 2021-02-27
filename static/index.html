@@ -90,7 +90,7 @@
 			console.log(data)
 			speedometer.set(0) //data["speed"])
 			document.getElementById("battery-percent").innerText = data["soc"]
-			document.getElementById("temperature").innerHTML = data["temp"] + "&deg;C"
+			document.getElementById("temperature").innerHTML = data["temp"]
 		} 
 
 		function updateData() {
@@ -119,11 +119,11 @@
 	<table id="power-info">
 		<tr>
 			<td class="label">Battery temperature</td>
-			<td><span class="sensor" id="temperature">60&deg;C</span></td>
+			<td><span class="sensor" id="temperature">60</span>&deg;C</td>
 		</tr>
 		<tr>
 			<td class="label">Solar power</td>
-			<td><span class="sensor">400 W</span></td>
+			<td><span class="sensor">400</span>W</td>
 		</tr>	
 	</table>
 </body>

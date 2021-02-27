@@ -24,12 +24,9 @@ handler = logging.FileHandler('/home/pi/log/hud.log')
 handler.setLevel(logging.ERROR)
 app.logger.addHandler(handler)
 
-#def read_serial():
-
 @app.route('/get-data')
 def get_data():
-    #read_serial()
-    line = ser.readline().decode("utf-8")
+    line = ser.readline().decode("ascii")
     if line:
         line = line.strip()
         if len(line.split()) == 2:
@@ -39,4 +36,4 @@ def get_data():
     return json.dumps(stats)
 
 if __name__ == '__main__':
-    app.run(debug=False, use_reloader=False)
+    app.run(debug=True, use_reloader=True)
