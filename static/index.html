@@ -54,11 +54,26 @@
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
 	<div class="grid">
-		<div class="dataViewer" id="time">
-			<span id="clock"></span>
+		<div class="error">
+			NO ERRORS!
 		</div>
-		<div class="dataViewer" id="soc">
-			<span id="battery-percent"></span>%
+		<div class="dataViewer time" id="time">
+			<span id="clock">00:00</span>
+		</div>
+		<div class="dataViewer soc" id="soc">
+			<span id="battery-percent">0</span>%
+		</div>
+		<div class="dataViewer pvolt" id="pvolt">
+			<span id="pack-voltage">0</span>V
+		</div>
+		<div class="dataViewer svolt" id="svolt">
+			<span id="solar-voltage">0</span>V
+		</div>
+		<div class="dataViewer ptemp" id="ptemp">
+			<span id="pack-temp">0</span>&deg;C
+		</div>
+		<div class="dataViewer speed" id="speed">
+			<span id="motor-speed">0</span>mph
 		</div>
 	</div>
 </body>

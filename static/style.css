@@ -5,8 +5,8 @@
 html, body {
 	margin: 0;
 	overflow: hidden;
-	background-color: #000;
-	color: #fff;
+	background-color: #ddd;
+	color: #222;
 }
 
 /* Webcam is displayed at 4:3, despite actually being 16:9 */
@@ -19,16 +19,54 @@ html, body {
 .grid {
 	height: 100vh;
 	width: 100vw;
-	background-color: #000;
+	background-color: #ddd;
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 20vh 1fr 1fr;
+	grid-template-areas: 
+		"error error error"
+		"svolt speed pvolt"
+		"soc   time  ptemp";
+}
+
+.error {
+	grid-area: error;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #222;
+	font-size: 10vh;
+	background-color: #0f6;
+}
+
+.svolt {
+	grid-area: svolt;
+}
+
+.speed {
+	grid-area: speed;
+}
+
+.pvolt {
+	grid-area: pvolt;
+}
+
+.soc {
+	grid-area: soc;
+}
+
+.time {
+	grid-area: time;
+}
+
+.ptemp {
+	grid-area: ptemp;
 }
 
 .dataViewer {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: #fff;
+	color: #222;
 	font-size: 10vh;
 }
