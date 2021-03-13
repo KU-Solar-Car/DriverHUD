@@ -29,14 +29,22 @@ html, body {
 		"soc   time  ptemp";
 }
 
-.error {
+#error-region {
 	grid-area: error;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: #222;
 	font-size: 10vh;
+}
+
+.no-error {
+	color: #222;
 	background-color: #0f6;
+}
+
+.error {
+	color: #222;
+	background-color: #f30;
 }
 
 .svolt {

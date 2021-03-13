@@ -71,11 +71,14 @@ def get_data():
             stats["pvolt"] = line_parts[2]
             stats["svolt"] = line_parts[3]
             stats["speed"] = line_parts[4]
-            error_str = line_parts[5]
-            stats["error"] = [error_messages[i] for i, val in error_str.reverse() if val == "1"]
+            error_str = bin(int(line_parts[5], 16))[2:].zfill(24)
+            stats["error"] = [
+                error_messages[i] for i, val in enumerate(error_str[::-1]) if val == "1"
+            ]
         else:
             app.logger.error(line)
     return json.dumps(stats)
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
+

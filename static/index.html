@@ -37,9 +37,29 @@
 		}
 
 		function populateData(data) {
-			console.log(data);
 			document.getElementById("battery-percent").innerText = data["soc"];
-			document.getElementById("temperature").innerHTML = data["temp"];
+			document.getElementById("pack-voltage").innerHTML = data["pvolt"];
+			document.getElementById("solar-voltage").innerHTML = data["svolt"];
+			document.getElementById("pack-temp").innerHTML = data["temp"];
+			document.getElementById("motor-speed").innerHTML = data["speed"];
+			document.getElementById("error-msg").innerHTML = data["error"];
+
+			let error_elem = document.getElementById("error-region");
+			if (data["error"].length === 0) {
+				if (!error_elem.classList.contains("no-error")) {
+					error_elem.classList.add("no-error");
+				}
+				if (error_elem.classList.contains("error")) {
+					error_elem.classList.remove("error");
+				}
+			} else {
+				if (error_elem.classList.contains("no-error")) {
+					error_elem.classList.remove("no-error");
+				}
+				if (!error_elem.classList.contains("error")) {
+					error_elem.classList.add("error");
+				}
+			}
 		} 
 
 		function updateData() {
@@ -54,8 +74,8 @@
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
 	<div class="grid">
-		<div class="error">
-			NO ERRORS!
+		<div id="error-region" class="no-error">
+			<span id="error-msg">NO ERRORS!</span>
 		</div>
 		<div class="dataViewer time" id="time">
 			<span id="clock">00:00</span>
