@@ -4,13 +4,56 @@
 	<title>Driver HUD</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="gauge.min.js"></script>
 	<script type="text/javascript">
+		const MAX_SPEED = 60;
+		let speedometer;
+		let errors = [];
+
 		window.onload = () => {
+			initSpeedometer();
 			clockTick();
 			updateData();
 			
 			setInterval(clockTick, 1000);
 			setInterval(updateData, 100);
+		}
+
+		function initSpeedometer() {
+			var ticks = [];
+			for (var i = 0; i <= MAX_SPEED/10; i++) ticks.push(i*10);
+			speedometer = new Donut(document.getElementById("speedometer")).setOptions({
+				angle: 0.25, // The span of the gauge arc
+				lineWidth: 0.1, // The line thickness
+				radiusScale: 1, // Relative radius, change this if clipping off canvas
+				/*
+				pointer: {
+					length: 0.6, // // Relative to gauge radius
+					strokeWidth: 0.035, // The thickness
+					color: '#EB0909' // Fill color
+				},
+				*/
+				limitMax: true,     // If false, max value increases automatically if value > maxValue
+				limitMin: true,     // If true, the min value of the gauge will be fixed
+				colorStart: '#6f6fa0',
+				colorStop: '#c0c0db',
+				strokeColor: '#eee',
+				generateGradient: true,
+				highDpiSupport: true,     // High resolution support
+				/*
+				staticLabels: {
+					font: "3vw sans-serif",  // Specifies font
+					labels: ticks,  // Print labels at these values
+					color: "#000000",  // Optional: Label text color
+					fractionDigits: 0  // Optional: Numerical precision. 0=round off.
+				},
+				*/
+			});
+			speedometer.maxValue = MAX_SPEED;
+			speedometer.setMinValue(0);
+			speedometer.animationSpeed = 16;
+			speedometer.setTextField(document.getElementById("motor-speed"));
+			speedometer.set(0);
 		}
 		
 		function clockTick() {
@@ -37,63 +80,77 @@
 		}
 
 		function populateData(data) {
-			document.getElementById("battery-percent").innerText = data["soc"];
+			document.getElementById("battery-percent").innerHTML = data["soc"];
 			document.getElementById("pack-voltage").innerHTML = data["pvolt"];
 			document.getElementById("solar-voltage").innerHTML = data["svolt"];
 			document.getElementById("pack-temp").innerHTML = data["temp"];
-			document.getElementById("motor-speed").innerHTML = data["speed"];
-			document.getElementById("error-msg").innerHTML = data["error"];
+			//document.getElementById("motor-speed").innerHTML = data["speed"];
+			speedometer.set(parseInt(data["speed"]));
 
-			let error_elem = document.getElementById("error-region");
-			if (data["error"].length === 0) {
-				if (!error_elem.classList.contains("no-error")) {
-					error_elem.classList.add("no-error");
+			let errorRegion = document.getElementById("error-region");
+			if (data["error"].length == 0) {
+				if (!errorRegion.classList.contains("no-error")) {
+					errorRegion.classList.add("no-error");
 				}
-				if (error_elem.classList.contains("error")) {
-					error_elem.classList.remove("error");
+				if (errorRegion.classList.contains("error")) {
+					errorRegion.classList.remove("error");
 				}
 			} else {
-				if (error_elem.classList.contains("no-error")) {
-					error_elem.classList.remove("no-error");
+				if (errorRegion.classList.contains("no-error")) {
+					errorRegion.classList.remove("no-error");
 				}
-				if (!error_elem.classList.contains("error")) {
-					error_elem.classList.add("error");
+				if (!errorRegion.classList.contains("error")) {
+					errorRegion.classList.add("error");
 				}
+			}
+
+			let errorList = document.getElementById("error-list");
+			while(errorList.firstChild) {
+				errorList.removeChild(errorList.firstChild);
+			}
+			if (data["error"].length > 0) {
+				data["error"].map((err) => {
+					let errNode = document.createElement("span");
+					errNode.innerText = err;
+					errorList.appendChild(errNode);
+				});
+			} else {
+					let errNode = document.createElement("span");
+					errNode.innerText = "No Errors";
+					errorList.appendChild(errNode);
 			}
 		} 
 
 		function updateData() {
 			readSensor("/get-data", data => populateData(JSON.parse(data)));
 		}
-
-		// Not yet implemented in Flask
-		/*function updateError() {
-			readSensor("/get-bps-error", error => document.getElementById("error").style.display = error ? "block" : "none");
-		}*/
 	</script>
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
 	<div class="grid">
 		<div id="error-region" class="no-error">
-			<span id="error-msg">NO ERRORS!</span>
+			<div id="error-list">
+				<span id="error-msg">No Errors</span>
+			</div>
 		</div>
 		<div class="dataViewer time" id="time">
-			<span id="clock">00:00</span>
+			<span><span id="clock">00:00</span></span>
 		</div>
 		<div class="dataViewer soc" id="soc">
-			<span id="battery-percent">0</span>%
+			<span><span id="battery-percent">0</span>%</span>
 		</div>
 		<div class="dataViewer pvolt" id="pvolt">
-			<span id="pack-voltage">0</span>V
+			<span><span id="pack-voltage">0</span>V</span>
 		</div>
 		<div class="dataViewer svolt" id="svolt">
-			<span id="solar-voltage">0</span>V
+			<span><span id="solar-voltage">0</span>V</span>
 		</div>
 		<div class="dataViewer ptemp" id="ptemp">
-			<span id="pack-temp">0</span>&deg;C
+			<span><span id="pack-temp">0</span>&deg;C</span>
 		</div>
-		<div class="dataViewer speed" id="speed">
-			<span id="motor-speed">0</span>mph
+		<div class="dataViewer speed" id="speed-region">
+			<canvas id="speedometer"></canvas>
+			<div id="motor-speed">0</div>
 		</div>
 	</div>
 </body>

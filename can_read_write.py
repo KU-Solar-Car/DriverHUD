@@ -24,32 +24,32 @@ stats = {
 
 error_messages = [
     # DTC #1 Status
-    "Discharge Limit Enforcement Fault",
-    "Charger Safety Relay Fault",
-    "Internal Hardware Fault",
-    "Internal Heatsink Thermistor Fault",
-    "Internal Software Fault",
-    "High Cell Voltage Too High Fault",
-    "Low Cell Voltage Too Low Fault",
-    "Pack Too Hot Fault",
+    "Discharge Limit Enforcement",
+    "Charger Safety Relay",
+    "Internal Hardware",
+    "Internal Heatsink Thermistor",
+    "Internal Software",
+    "High Cell Voltage Too High",
+    "Low Cell Voltage Too Low",
+    "Pack Too Hot",
     # Reserved
     # DTC #2 Status
-    "Internal Communication Fault",
-    "Cell Balancing Stuck Off Fault",
-    "Weak Cell Fault",
-    "Low Cell Voltage Fault",
-    "Open Wiring Fault",
-    "Current Sensor Fault",
-    "Highest Cell Voltage Over 5 Volts Fault",
-    "Cell ASIC Fault",
-    "Weak Pack Fault",
-    "Fan Monitor Fault",
-    "Thermistor Fault",
-    "External Communication Fault",
-    "Redundant Power Supply Fault",
-    "High Voltage Isolation Fault",
-    "Input Power Supply Fault",
-    "Charge Limit Enforcement Fault"
+    "Internal Communication",
+    "Cell Balancing Stuck Off",
+    "Weak Cell",
+    "Low Cell Voltage",
+    "Open Wiring",
+    "Current Sensor",
+    "Highest Cell Voltage Over 5 Volts",
+    "Cell ASIC",
+    "Weak Pack",
+    "Fan Monitor",
+    "Thermistor",
+    "External Communication",
+    "Redundant Power Supply",
+    "High Voltage Isolation",
+    "Input Power Supply",
+    "Charge Limit Enforcement"
 ]
 
 app = Flask(__name__)
