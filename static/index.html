@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script src="gauge.min.js"></script>
-	<script type="text/javascript">
+	{# <script type="text/javascript">
 		const MAX_SPEED = 60;
 		let speedometer;
 		let errors = [];
@@ -14,7 +14,7 @@
 			initSpeedometer();
 			clockTick();
 			updateData();
-			
+
 			setInterval(clockTick, 1000);
 			setInterval(updateData, 100);
 		}
@@ -55,7 +55,7 @@
 			speedometer.setTextField(document.getElementById("motor-speed"));
 			speedometer.set(0);
 		}
-		
+
 		function clockTick() {
 			let d = new Date();
 			let hour = ((d.getHours() % 12) || 12);
@@ -65,7 +65,7 @@
 			let amOrPm = d.getHours() >= 12 ? "pm" : "am";
 			document.getElementById("clock").innerHTML = hour + colon + min + amOrPm;
 		}
-		
+
 		function readSensor(endpoint, callback) {
 			let xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
@@ -119,39 +119,45 @@
 					errNode.innerText = "No Errors";
 					errorList.appendChild(errNode);
 			}
-		} 
+		}
 
 		function updateData() {
 			readSensor("/get-data", data => populateData(JSON.parse(data)));
 		}
-	</script>
+	</script> #}
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
-	<div class="grid">
-		<div id="error-region" class="no-error">
-			<div id="error-list">
-				<span id="error-msg">No Errors</span>
-			</div>
-		</div>
-		<div class="dataViewer time" id="time">
-			<span><span id="clock">00:00</span></span>
-		</div>
-		<div class="dataViewer soc" id="soc">
-			<span><span id="battery-percent">0</span>%</span>
-		</div>
-		<div class="dataViewer pvolt" id="pvolt">
-			<span><span id="pack-voltage">0</span>V</span>
-		</div>
-		<div class="dataViewer svolt" id="svolt">
-			<span><span id="solar-voltage">0</span>V</span>
-		</div>
-		<div class="dataViewer ptemp" id="ptemp">
-			<span><span id="pack-temp">0</span>&deg;C</span>
-		</div>
-		<div class="dataViewer speed" id="speed-region">
-			<canvas id="speedometer"></canvas>
-			<div id="motor-speed">0</div>
-		</div>
-	</div>
+	<div id="gauge">
+        <canvas id="canvasId" width="800px" height="480px"></canvas>
+    </div>
+	<script src="config.js"></script>
+    <script src="gauge.js"></script>
+    <script>
+        let batteryCurrent = new Gauge(config.batteryCurrent);
+        let motorCurrent = new Gauge(config.motorCurrent);
+        let solarCurrent = new Gauge(config.solarCurrent);
+        let minCellVolt = new Gauge(config.minCellVolt);
+        let soc = new Gauge(config.soc);
+        let speed = new Gauge(config.speed);
+        let time = new Gauge(config.time);
+        let packVolt = new Gauge(config.packVolt);
+        let minPackTemp = new Gauge(config.minPackTemp);
+        let maxPackTemp = new Gauge(config.maxPackTemp);
+        let motorTemp = new Gauge(config.motorTemp);
+        let maxCellVolt = new Gauge(config.maxCellVolt);
+
+        batteryCurrent.setValue(2.4);
+        motorCurrent.setValue(2.4);
+        solarCurrent.setValue(2.4);
+        minCellVolt.setValue(3.6);
+        soc.setValue(55);
+        speed.setValue(30);
+        time.setValue(720);
+        packVolt.setValue(90);
+        minPackTemp.setValue(22);
+        maxPackTemp.setValue(26);
+        motorTemp.setValue(45);
+        maxCellVolt.setValue(5);
+    </script>
 </body>
 </html>
