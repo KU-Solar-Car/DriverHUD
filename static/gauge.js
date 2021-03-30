@@ -11,6 +11,7 @@ class Gauge {
         this.high = config.high;
         this.title = config.title;
         this.units = config.units;
+		this.noDraw = config.noDraw;
 
         this.canvas = document.getElementById(config.canvasId);
         this.ctx = this.canvas.getContext('2d');
@@ -19,14 +20,12 @@ class Gauge {
 
     computeAngle(value) {
         let percent = (value - this.low) / (this.high - this.low);
-        console.log(percent);
         if (percent < 0) {
             percent = 0;
         }
         if (percent > 1) {
             percent = 1;
         }
-        console.log(percent);
         return percent * (this.endAngle - this.startAngle + 2 * Math.PI) + this.startAngle;
     }
 
@@ -101,9 +100,11 @@ class Gauge {
     }
 
     draw() {
-        this.drawFilledGauge();
-        this.drawBaseGauge();
-        this.drawMinMax();
+		if (!this.noDraw) {
+			this.drawFilledGauge();
+			this.drawBaseGauge();
+			this.drawMinMax();
+		}
         this.drawText();
     }
 
@@ -135,14 +136,12 @@ class TimeGauge {
 
     computeAngle(value) {
         let percent = (value - this.low) / (this.high - this.low);
-        console.log(percent);
         if (percent < 0) {
             percent = 0;
         }
         if (percent > 1) {
             percent = 1;
         }
-        console.log(percent);
         return percent * (this.endAngle - this.startAngle + 2 * Math.PI) + this.startAngle;
     }
 

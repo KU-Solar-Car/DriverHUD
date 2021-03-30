@@ -1,7 +1,8 @@
-const column4 = 800 - 80; // 800 - column1;
-const column3 = column4 - 160; // 800 - column2;
-const column2 = column3 - 160; // 32 + 160 + 32 + 80;
-const column1 = column2 - 160; // 32 + 80;
+const column1 = 80; // 32 + 80;
+const column2 = 240; // 32 + 80;
+const column3 = 400; // 32 + 160 + 32 + 80;
+const column4 = 560; // 800 - column3;
+const column5 = 720; // 800 - column2;
 
 const row1 = 80;
 const row2 = 240;
@@ -24,8 +25,8 @@ let config = {
     },
     "motorCurrent": {
         "canvasId": "canvasId",
-        "cx": column2,
-        "cy": row1,
+        "cx": column1,
+        "cy": row2,
         "r1": r1,
         "r2": r2,
         "low": 0,
@@ -35,8 +36,8 @@ let config = {
     },
     "solarCurrent": {
         "canvasId": "canvasId",
-        "cx": column3,
-        "cy": row1,
+        "cx": column1,
+        "cy": row3,
         "r1": r1,
         "r2": r2,
         "low": 0,
@@ -46,7 +47,7 @@ let config = {
     },
     "minCellVolt": {
         "canvasId": "canvasId",
-        "cx": column4,
+        "cx": column5,
         "cy": row1,
         "r1": r1,
         "r2": r2,
@@ -57,7 +58,7 @@ let config = {
     },
     "soc": {
         "canvasId": "canvasId",
-        "cx": column1,
+        "cx": column2,
         "cy": row2,
         "r1": r1,
         "r2": r2,
@@ -68,7 +69,7 @@ let config = {
     },
     "speed": {
         "canvasId": "canvasId",
-        "cx": column2,
+        "cx": column3,
         "cy": row2,
         "r1": r1,
         "r2": r2,
@@ -80,13 +81,14 @@ let config = {
     "time": {
         "canvasId": "canvasId",
         "cx": column3,
-        "cy": row2,
+        "cy": row3,
         "r1": r1,
         "r2": r2,
         "low": 0,
         "high": 1440,
         "title": "Time",
-        "units": "min"
+        "units": "",
+		"noDraw": true
     },
     "packVolt": {
         "canvasId": "canvasId",
@@ -101,7 +103,7 @@ let config = {
     },
     "minPackTemp": {
         "canvasId": "canvasId",
-        "cx": column1,
+        "cx": column2,
         "cy": row3,
         "r1": r1,
         "r2": r2,
@@ -112,8 +114,8 @@ let config = {
     },
     "maxPackTemp": {
         "canvasId": "canvasId",
-        "cx": column2,
-        "cy": row3,
+        "cx": column5,
+        "cy": row2,
         "r1": r1,
         "r2": r2,
         "low": 0,
@@ -123,7 +125,7 @@ let config = {
     },
     "motorTemp": {
         "canvasId": "canvasId",
-        "cx": column3,
+        "cx": column4,
         "cy": row3,
         "r1": r1,
         "r2": r2,
@@ -134,7 +136,7 @@ let config = {
     },
     "maxCellVolt": {
         "canvasId": "canvasId",
-        "cx": column4,
+        "cx": column5,
         "cy": row3,
         "r1": r1,
         "r2": r2,
