@@ -8,7 +8,7 @@ class FaultBox {
 
 	drawBox() {
 		if (this.errorMessages.length != 0) { 
-			this.ctx.fillStyle = 'rgba(255, 0, 0, 0)';
+			this.ctx.fillStyle = 'rgba(255, 0, 0, 0.4)';
 		} else {
 		this.ctx.fillStyle = 'rgba(0, 0, 0, 0)';
 		}
@@ -31,7 +31,7 @@ class FaultBox {
 
 			this.ctx.textAlign = 'center';
 			this.ctx.textBaseline = 'top';
-			this.ctx.fillStyle = '#f00';
+			this.ctx.fillStyle = '#000';
 			this.ctx.font = '20px arial';
 			this.ctx.fillText(err, coords.x + 130, coords.y + 10);
 
