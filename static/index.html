@@ -42,17 +42,44 @@
         maxPackTemp.setValue(26);
         motorTemp.setValue(45);
         maxCellVolt.setValue(5);
+		
+		setTimeout(() => {
 		faults.setErrorMessages([
-			"Pack Too Hot",
-			"Another",
-			"Motor Controller Too Hot",
-			"SOC Low",
-			"Pack Volt Low",
-			"Open Current",
-			"Panic",
-			"Max Cell > 5V",
-			"Another",
+			"Discharge Limit", 
+			"Charger Relay", 
+			"Int Hardware", 
+			"Int HS Therm", 
+			"Int Software", 
+			"Max Cell V High", 
+			"Min Cell V Low", 
+			"Pack Too Hot", 
+			"Int Comm", 
+			"Cell Balancing", 
+			"Weak Cell", 
+			"Low Cell Voltage", 
+			"Open Wiring", 
+			"Current Sensor", 
+			"Max Cell > 5V", 
+			"Cell ASIC", 
+			"Weak Pack", 
+			"Fan Monitor", 
+			"Thermistor", 
+			"Ext Comm", 
+			"Redundant PS", 
+			"High Volt Iso", 
+			"Input PS", 
+			"Charge Limit" 
 		]);
+		}, 10000);
+
+		setTimeout(() => {
+			faults.setErrorMessages([]);
+		}, 5000);
+
+		setInterval(() => {
+			let rand = Math.floor(Math.random() * 60);
+			speed.setValue(rand);
+		}, 1000);
     </script>
 </body>
 </html>

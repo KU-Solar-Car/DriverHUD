@@ -216,15 +216,26 @@ class TimeGauge {
     }
 
     draw() {
+		this.ctx.save();
         this.drawFilledGauge();
+		this.ctx.restore();
+		this.ctx.save();
         this.drawBaseGauge();
+		this.ctx.restore();
+		this.ctx.save();
         this.drawMinMax();
+		this.ctx.restore();
+		this.ctx.save();
         this.drawText();
+		this.ctx.restore();
+
+		window.requestAnimationFrame(this.draw.bind(this));
     }
 
     setValue(newVal) {
         this.ctx.clearRect(this.cx - this.r2, this.cy - this.r2, this.r2 * 2, this.r2 * 2);
-        this.value = newVal;
-        this.draw();
+		this.value = newVal;
+		//this.draw();
+		window.requestAnimationFrame(this.draw.bind(this));
     }
 }

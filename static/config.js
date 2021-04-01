@@ -14,7 +14,7 @@ const r2 = 65;
 let config = {
     "batteryCurrent": {
         "canvasId": "canvasId",
-        "cx": column1,
+        "cx": column2,
         "cy": row1,
         "r1": r1,
         "r2": r2,
@@ -25,8 +25,8 @@ let config = {
     },
     "motorCurrent": {
         "canvasId": "canvasId",
-        "cx": column1,
-        "cy": row2,
+        "cx": column3,
+        "cy": row1,
         "r1": r1,
         "r2": r2,
         "low": 0,
@@ -36,8 +36,8 @@ let config = {
     },
     "solarCurrent": {
         "canvasId": "canvasId",
-        "cx": column1,
-        "cy": row3,
+        "cx": column4,
+        "cy": row1,
         "r1": r1,
         "r2": r2,
         "low": 0,
