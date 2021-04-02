@@ -13,7 +13,7 @@ const r2 = 65;
 
 let config = {
     "batteryCurrent": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column2,
         "cy": row1,
         "r1": r1,
@@ -24,7 +24,7 @@ let config = {
         "units": "A"
     },
     "motorCurrent": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column3,
         "cy": row1,
         "r1": r1,
@@ -35,7 +35,7 @@ let config = {
         "units": "A"
     },
     "solarCurrent": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column4,
         "cy": row1,
         "r1": r1,
@@ -46,7 +46,7 @@ let config = {
         "units": "A"
     },
     "minCellVolt": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column5,
         "cy": row1,
         "r1": r1,
@@ -57,7 +57,7 @@ let config = {
         "units": "V"
     },
     "soc": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column2,
         "cy": row2,
         "r1": r1,
@@ -68,7 +68,7 @@ let config = {
         "units": "%"
     },
     "speed": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column3,
         "cy": row2,
         "r1": r1,
@@ -79,7 +79,7 @@ let config = {
         "units": "mph"
     },
     "time": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column3,
         "cy": row3,
         "r1": r1,
@@ -91,7 +91,7 @@ let config = {
 		"noDraw": true
     },
     "packVolt": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column4,
         "cy": row2,
         "r1": r1,
@@ -102,7 +102,7 @@ let config = {
         "units": "V"
     },
     "minPackTemp": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column2,
         "cy": row3,
         "r1": r1,
@@ -113,7 +113,7 @@ let config = {
         "units": "°C"
     },
     "maxPackTemp": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column5,
         "cy": row2,
         "r1": r1,
@@ -124,7 +124,7 @@ let config = {
         "units": "°C"
     },
     "motorTemp": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column4,
         "cy": row3,
         "r1": r1,
@@ -135,7 +135,7 @@ let config = {
         "units": "°C"
     },
     "maxCellVolt": {
-        "canvasId": "canvasId",
+        "svgId": "svgId",
         "cx": column5,
         "cy": row3,
         "r1": r1,

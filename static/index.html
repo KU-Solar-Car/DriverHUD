@@ -6,9 +6,35 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
-	<div id="gauge">
-        <canvas id="canvasId" width="800px" height="480px"></canvas>
-    </div>
+    <svg width="800px" height="480px" id="svgId">
+        <style>
+            .valueText {
+                font-family: Helvetica;
+                text-anchor: middle;
+                font-size: 24px;
+            }
+            .valueSpan {
+                font-family: Helvetica;
+                text-anchor: middle;
+                font-size: 24px;
+            }
+            .labelSpan {
+                font-family: Helvetica;
+                text-anchor: middle;
+                font-size: 16px;
+            }
+            .minText {
+                font-family: Helvetica;
+                text-anchor: end;
+                font-size: 20px;
+            }
+            .maxText {
+                font-family: Helvetica;
+                text-anchor: start;
+                font-size: 20px;
+            }
+        </style>
+    </svg>
 	<script src="config.js"></script>
     <script src="gauge.js"></script>
     <script src="faults.js"></script>
@@ -42,33 +68,33 @@
         maxPackTemp.setValue(26);
         motorTemp.setValue(45);
         maxCellVolt.setValue(5);
-		
+
 		setTimeout(() => {
 		faults.setErrorMessages([
-			"Discharge Limit", 
-			"Charger Relay", 
-			"Int Hardware", 
-			"Int HS Therm", 
-			"Int Software", 
-			"Max Cell V High", 
-			"Min Cell V Low", 
-			"Pack Too Hot", 
-			"Int Comm", 
-			"Cell Balancing", 
-			"Weak Cell", 
-			"Low Cell Voltage", 
-			"Open Wiring", 
-			"Current Sensor", 
-			"Max Cell > 5V", 
-			"Cell ASIC", 
-			"Weak Pack", 
-			"Fan Monitor", 
-			"Thermistor", 
-			"Ext Comm", 
-			"Redundant PS", 
-			"High Volt Iso", 
-			"Input PS", 
-			"Charge Limit" 
+			"Discharge Limit",
+			"Charger Relay",
+			"Int Hardware",
+			"Int HS Therm",
+			"Int Software",
+			"Max Cell V High",
+			"Min Cell V Low",
+			"Pack Too Hot",
+			"Int Comm",
+			"Cell Balancing",
+			"Weak Cell",
+			"Low Cell Voltage",
+			"Open Wiring",
+			"Current Sensor",
+			"Max Cell > 5V",
+			"Cell ASIC",
+			"Weak Pack",
+			"Fan Monitor",
+			"Thermistor",
+			"Ext Comm",
+			"Redundant PS",
+			"High Volt Iso",
+			"Input PS",
+			"Charge Limit"
 		]);
 		}, 10000);
 

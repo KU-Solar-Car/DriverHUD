@@ -1,3 +1,5 @@
+const svgns = "http://www.w3.org/2000/svg";
+
 class Gauge {
     startAngle = 3 * Math.PI / 4;
     endAngle = 1 * Math.PI / 4;
@@ -11,127 +13,66 @@ class Gauge {
         this.high = config.high;
         this.title = config.title;
         this.units = config.units;
-		this.noDraw = config.noDraw;
 
-        this.canvas = document.getElementById(config.canvasId);
-        this.ctx = this.canvas.getContext('2d');
         this.value = this.low;
-    }
+        this.svgContainer = document.getElementById(config.svgId);
 
-    computeAngle(value) {
-        let percent = (value - this.low) / (this.high - this.low);
-        if (percent < 0) {
-            percent = 0;
-        }
-        if (percent > 1) {
-            percent = 1;
-        }
-        return percent * (this.endAngle - this.startAngle + 2 * Math.PI) + this.startAngle;
-    }
-
-    drawBaseGauge() {
-        let startPoint1 = [this.r1 * Math.cos(this.startAngle) + this.cx, this.r1 * Math.sin(this.startAngle) + this.cy];
-        let startPoint2 = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
-        let endPoint1 = [this.r1 * Math.cos(this.endAngle) + this.cx, this.r1 * Math.sin(this.endAngle) + this.cy];
-        let endPoint2 = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
-
-        this.ctx.fillStyle = '#000';
-        this.ctx.beginPath();
-        this.ctx.arc(this.cx, this.cy, this.r1, this.startAngle, this.endAngle, false);
-        this.ctx.lineTo(endPoint2[0], endPoint2[1]);
-        this.ctx.arc(this.cx, this.cy, this.r2, this.endAngle, this.startAngle, true);
-        this.ctx.lineTo(startPoint1[0], startPoint1[1]);
-        this.ctx.stroke();
-    }
-
-    drawFilledGauge() {
-        let angle = this.computeAngle(this.value);
-        let startPoint1 = [this.r1 * Math.cos(this.startAngle) + this.cx, this.r1 * Math.sin(this.startAngle) + this.cy];
-        let startPoint2 = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
-        let endPoint1 = [this.r1 * Math.cos(angle) + this.cx, this.r1 * Math.sin(angle) + this.cy];
-        let endPoint2 = [this.r2 * Math.cos(angle) + this.cx, this.r2 * Math.sin(angle) + this.cy];
-
-        this.ctx.fillStyle = '#0f0';
-        this.ctx.beginPath();
-        this.ctx.arc(this.cx, this.cy, this.r1, this.startAngle, angle, false);
-        this.ctx.lineTo(endPoint2[0], endPoint2[1]);
-        this.ctx.arc(this.cx, this.cy, this.r2, angle, this.startAngle, true);
-        this.ctx.lineTo(startPoint1[0], startPoint1[1]);
-        this.ctx.closePath();
-        this.ctx.fill();
-    }
-
-    drawMinMax() {
-        let startPoint2 = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
-        this.ctx.beginPath();
-        this.ctx.moveTo(startPoint2[0], startPoint2[1]);
-        this.ctx.lineTo(startPoint2[0] - 5, startPoint2[1] + 5);
-        this.ctx.closePath();
-        this.ctx.stroke();
-        this.ctx.font = this.r2 * 0.2 + 'px arial';
-        this.ctx.textAlign = 'right';
-        this.ctx.textBaseline = 'top';
-        this.ctx.fillStyle = '#000';
-        this.ctx.fillText(this.low, startPoint2[0] - 5, startPoint2[1] + 5);
-
-        let endPoint2 = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
-        this.ctx.beginPath();
-        this.ctx.moveTo(endPoint2[0], endPoint2[1]);
-        this.ctx.lineTo(endPoint2[0] + 5, endPoint2[1] + 5);
-        this.ctx.closePath();
-        this.ctx.stroke();
-        this.ctx.font = this.r2 * 0.2 + 'px arial';
-        this.ctx.textAlign = 'left';
-        this.ctx.textBaseline = 'top';
-        this.ctx.fillStyle = '#000';
-        this.ctx.fillText(this.high, endPoint2[0] + 5, endPoint2[1] + 5);
-    }
-
-    drawText() {
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'bottom';
-        this.ctx.fillStyle = '#000';
-        this.ctx.font = this.r2 * 0.25 + 'px arial';
-        this.ctx.fillText(this.title, this.cx, this.cy - 10);
-        this.ctx.font = this.r2 * 0.45 + 'px arial';
-        this.ctx.textBaseline = 'top';
-        let output = this.value + this.units;
-        this.ctx.fillText(output, this.cx, this.cy);
-    }
-
-    draw() {
-		if (!this.noDraw) {
-			this.drawFilledGauge();
-			this.drawBaseGauge();
-			this.drawMinMax();
-		}
-        this.drawText();
-    }
-
-    setValue(newVal) {
-        this.ctx.clearRect(this.cx - this.r2, this.cy - this.r2, this.r2 * 2, this.r2 * 2);
-        this.value = newVal;
+        this.createElements();
         this.draw();
     }
-}
 
-class TimeGauge {
-    startAngle = 3 * Math.PI / 2;
-    endAngle = 3 * Math.PI / 2;
+    createElements() {
+        let start = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
+        let end = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
 
-    constructor(config) {
-        this.cx = config.cx;
-        this.cy = config.cy;
-        this.r1 = config.r1;
-        this.r2 = config.r2;
-        this.low = config.low;
-        this.high = config.high;
-        this.title = config.title;
-        this.units = config.units;
+        this.gaugeFill = document.createElementNS(svgns, "path");
+        this.gaugeFill.setAttribute('stroke', 'transparent');
+        this.gaugeFill.setAttribute('fill', '#0f0');
+        this.svgContainer.appendChild(this.gaugeFill);
 
-        this.canvas = document.getElementById(config.canvasId);
-        this.ctx = this.canvas.getContext('2d');
-        this.value = this.low;
+        this.gaugeBorder = document.createElementNS(svgns, "path");
+        this.gaugeBorder.setAttribute('stroke', 'black');
+        this.gaugeBorder.setAttribute('fill', 'transparent');
+        this.svgContainer.appendChild(this.gaugeBorder);
+
+        this.valueText = document.createElementNS(svgns, "text");
+        this.valueText.setAttribute('x', this.cx);
+        this.valueText.setAttribute('y', this.cy);
+        this.valueText.setAttribute('fill', 'black');
+        this.valueText.setAttribute('class', 'valueText');
+        this.svgContainer.appendChild(this.valueText);
+
+        this.labelSpan = document.createElementNS(svgns, "tspan");
+        this.labelSpan.setAttribute('x', this.cx);
+        this.labelSpan.setAttribute('y', this.cy - 5);
+        this.labelSpan.setAttribute('fill', 'black');
+        this.labelSpan.setAttribute('class', 'labelSpan');
+        this.labelSpan.setAttribute('dominant-baseline', 'auto');
+        this.valueText.appendChild(this.labelSpan);
+
+        this.valueSpan = document.createElementNS(svgns, "tspan");
+        this.valueSpan.setAttribute('x', this.cx);
+        this.valueSpan.setAttribute('y', this.cy + 5);
+        this.valueSpan.setAttribute('fill', 'black');
+        this.valueSpan.setAttribute('class', 'valueSpan');
+        this.valueSpan.setAttribute('dominant-baseline', 'hanging');
+        this.valueText.appendChild(this.valueSpan);
+
+        this.minText = document.createElementNS(svgns, "text");
+        this.minText.setAttribute('x', start[0] - 5);
+        this.minText.setAttribute('y', start[1] + 5);
+        this.minText.setAttribute('fill', 'black');
+        this.minText.setAttribute('class', 'minText');
+        this.minText.setAttribute('dominant-baseline', 'hanging');
+        this.svgContainer.appendChild(this.minText);
+
+        this.maxText = document.createElementNS(svgns, "text");
+        this.maxText.setAttribute('x', end[0] + 5);
+        this.maxText.setAttribute('y', end[1] + 5);
+        this.maxText.setAttribute('fill', 'black');
+        this.maxText.setAttribute('class', 'maxText');
+        this.maxText.setAttribute('dominant-baseline', 'hanging');
+        this.svgContainer.appendChild(this.maxText);
     }
 
     computeAngle(value) {
@@ -146,96 +87,52 @@ class TimeGauge {
     }
 
     drawBaseGauge() {
-        let startPoint1 = [this.r1 * Math.cos(this.startAngle) + this.cx, this.r1 * Math.sin(this.startAngle) + this.cy];
-        let startPoint2 = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
-        let endPoint1 = [this.r1 * Math.cos(this.endAngle) + this.cx, this.r1 * Math.sin(this.endAngle) + this.cy];
-        let endPoint2 = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
+        let start1 = [this.r1 * Math.cos(this.startAngle) + this.cx, this.r1 * Math.sin(this.startAngle) + this.cy];
+        let start2 = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
+        let end1 = [this.r1 * Math.cos(this.endAngle) + this.cx, this.r1 * Math.sin(this.endAngle) + this.cy];
+        let end2 = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
 
-        this.ctx.fillStyle = '#000';
-        this.ctx.beginPath();
-        this.ctx.arc(this.cx, this.cy, this.r1, this.startAngle, this.endAngle, false);
-        this.ctx.moveTo(endPoint2[0], endPoint2[1]);
-        this.ctx.arc(this.cx, this.cy, this.r2, this.endAngle, this.startAngle, true);
-        this.ctx.moveTo(startPoint1[0], startPoint1[1]);
-        this.ctx.stroke();
+        let svgString = `M ${start1[0]} ${start1[1]} A ${this.r1} ${this.r1} 0 1 1 ${end1[0]} ${end1[1]} L ${end2[0] + 5} ${end2[1] + 5}
+                         M ${end2[0]} ${end2[1]} A ${this.r2} ${this.r2} 0 1 0 ${start2[0]} ${start2[1]}
+                         L ${start2[0] - 5} ${start2[1] + 5} L ${start1[0]} ${start1[1]}`;
+
+        this.gaugeBorder.setAttribute('d', svgString);
     }
 
     drawFilledGauge() {
         let angle = this.computeAngle(this.value);
-        let startPoint1 = [this.r1 * Math.cos(this.startAngle) + this.cx, this.r1 * Math.sin(this.startAngle) + this.cy];
-        let startPoint2 = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
-        let endPoint1 = [this.r1 * Math.cos(angle) + this.cx, this.r1 * Math.sin(angle) + this.cy];
-        let endPoint2 = [this.r2 * Math.cos(angle) + this.cx, this.r2 * Math.sin(angle) + this.cy];
+        let start1 = [this.r1 * Math.cos(this.startAngle) + this.cx, this.r1 * Math.sin(this.startAngle) + this.cy];
+        let start2 = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
+        let end1 = [this.r1 * Math.cos(angle) + this.cx, this.r1 * Math.sin(angle) + this.cy];
+        let end2 = [this.r2 * Math.cos(angle) + this.cx, this.r2 * Math.sin(angle) + this.cy];
+        let sweep = 0;
+        if (angle > this.startAngle + Math.PI) {
+            sweep = 1;
+        }
 
-        this.ctx.fillStyle = '#0fc';
-        this.ctx.beginPath();
-        this.ctx.arc(this.cx, this.cy, this.r1, this.startAngle, angle, false);
-        this.ctx.lineTo(endPoint2[0], endPoint2[1]);
-        this.ctx.arc(this.cx, this.cy, this.r2, angle, this.startAngle, true);
-        this.ctx.lineTo(startPoint1[0], startPoint1[1]);
-        this.ctx.closePath();
-        this.ctx.fill();
-    }
+        let svgString = `M ${start1[0]} ${start1[1]} A ${this.r1} ${this.r1} 0 ${sweep} 1 ${end1[0]} ${end1[1]}
+                         L ${end2[0]} ${end2[1]} A ${this.r2} ${this.r2} 0 ${sweep} 0 ${start2[0]} ${start2[1]}
+                         L ${start2[0]} ${start2[1]}`;
 
-    drawMinMax() {
-        let startPoint2 = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
-        this.ctx.beginPath();
-        this.ctx.moveTo(startPoint2[0], startPoint2[1]);
-        this.ctx.lineTo(startPoint2[0] - 5, startPoint2[1] + 5);
-        this.ctx.closePath();
-        this.ctx.stroke();
-        this.ctx.font = this.r2 * 0.2 + 'px arial';
-        this.ctx.textAlign = 'right';
-        this.ctx.textBaseline = 'top';
-        this.ctx.fillStyle = '#000';
-        this.ctx.fillText(this.low, startPoint2[0] - 5, startPoint2[1] + 5);
-
-        let endPoint2 = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
-        this.ctx.beginPath();
-        this.ctx.moveTo(endPoint2[0], endPoint2[1]);
-        this.ctx.lineTo(endPoint2[0] + 5, endPoint2[1] + 5);
-        this.ctx.closePath();
-        this.ctx.stroke();
-        this.ctx.font = this.r2 * 0.2 + 'px arial';
-        this.ctx.textAlign = 'left';
-        this.ctx.textBaseline = 'top';
-        this.ctx.fillStyle = '#000';
-        this.ctx.fillText(this.high, endPoint2[0] + 5, endPoint2[1] + 5);
+        this.gaugeFill.setAttribute('d', svgString);
     }
 
     drawText() {
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'bottom';
-        this.ctx.fillStyle = '#000';
-        this.ctx.font = this.r2 * 0.25 + 'px arial';
-        let output = "Speed";
-        this.ctx.fillText(this.title, this.cx, this.cy - 5);
-        this.ctx.textBaseline = 'top';
-        output = this.value + this.units;
-        this.ctx.fillText(output, this.cx, this.cy + 5);
+        this.labelSpan.textContent = this.title;
+        this.valueSpan.textContent = this.value + this.units;
+        this.minText.textContent = this.low;
+        this.maxText.textContent = this.high;
     }
 
     draw() {
-		this.ctx.save();
         this.drawFilledGauge();
-		this.ctx.restore();
-		this.ctx.save();
         this.drawBaseGauge();
-		this.ctx.restore();
-		this.ctx.save();
-        this.drawMinMax();
-		this.ctx.restore();
-		this.ctx.save();
         this.drawText();
-		this.ctx.restore();
-
-		window.requestAnimationFrame(this.draw.bind(this));
     }
 
     setValue(newVal) {
-        this.ctx.clearRect(this.cx - this.r2, this.cy - this.r2, this.r2 * 2, this.r2 * 2);
-		this.value = newVal;
-		//this.draw();
-		window.requestAnimationFrame(this.draw.bind(this));
+        this.value = newVal;
+        this.drawFilledGauge();
+        this.drawText();
     }
 }
