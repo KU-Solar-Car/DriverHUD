@@ -13,6 +13,7 @@ class Gauge {
         this.high = config.high;
         this.title = config.title;
         this.units = config.units;
+		this.noDraw = config.noDraw;
 
         let averageR = (this.r1 + this.r2) / 2;
         this.circumference = 2 * Math.PI * averageR;
@@ -28,23 +29,25 @@ class Gauge {
         let start = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
         let end = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
 
-        this.gaugeFill = document.createElementNS(svgns, "circle");
-        this.gaugeFill.setAttribute('cx', this.cx);
-        this.gaugeFill.setAttribute('cy', this.cy);
-        this.gaugeFill.setAttribute('r', (this.r1 + this.r2) / 2);
-        this.gaugeFill.setAttribute('stroke', '#0f0');
-        this.gaugeFill.setAttribute('stroke-width', `${(this.r2 - this.r1)}px`);
-        this.gaugeFill.setAttribute('stroke-dashoffset', `${this.circumference / 4}px`);
-        this.gaugeFill.setAttribute('stroke-dasharray', `${this.circumference}px`);
-        this.gaugeFill.setAttribute('transform-origin', `${this.cx}px ${this.cy}px`);
-        this.gaugeFill.setAttribute('fill', 'transparent');
-        this.gaugeFill.setAttribute('class', 'gaugePath');
-        this.svgContainer.appendChild(this.gaugeFill);
+		if (!this.noDraw) {
+			this.gaugeFill = document.createElementNS(svgns, "circle");
+			this.gaugeFill.setAttribute('cx', this.cx);
+			this.gaugeFill.setAttribute('cy', this.cy);
+			this.gaugeFill.setAttribute('r', (this.r1 + this.r2) / 2);
+			this.gaugeFill.setAttribute('stroke', '#0f0');
+			this.gaugeFill.setAttribute('stroke-width', `${(this.r2 - this.r1)}px`);
+			this.gaugeFill.setAttribute('stroke-dashoffset', `${this.circumference / 4}px`);
+			this.gaugeFill.setAttribute('stroke-dasharray', `${this.circumference}px`);
+			this.gaugeFill.setAttribute('transform-origin', `${this.cx}px ${this.cy}px`);
+			this.gaugeFill.setAttribute('fill', 'transparent');
+			this.gaugeFill.setAttribute('class', 'gaugePath');
+			this.svgContainer.appendChild(this.gaugeFill);
 
-        this.gaugeBorder = document.createElementNS(svgns, "path");
-        this.gaugeBorder.setAttribute('stroke', 'black');
-        this.gaugeBorder.setAttribute('fill', 'transparent');
-        this.svgContainer.appendChild(this.gaugeBorder);
+			this.gaugeBorder = document.createElementNS(svgns, "path");
+			this.gaugeBorder.setAttribute('stroke', 'black');
+			this.gaugeBorder.setAttribute('fill', 'transparent');
+			this.svgContainer.appendChild(this.gaugeBorder);
+		}
 
         this.valueText = document.createElementNS(svgns, "text");
         this.valueText.setAttribute('x', this.cx);
@@ -69,21 +72,23 @@ class Gauge {
         this.valueSpan.setAttribute('dominant-baseline', 'hanging');
         this.valueText.appendChild(this.valueSpan);
 
-        this.minText = document.createElementNS(svgns, "text");
-        this.minText.setAttribute('x', start[0] - 5);
-        this.minText.setAttribute('y', start[1] + 5);
-        this.minText.setAttribute('fill', 'black');
-        this.minText.setAttribute('class', 'minText');
-        this.minText.setAttribute('dominant-baseline', 'hanging');
-        this.svgContainer.appendChild(this.minText);
+		if (!this.noDraw) {
+			this.minText = document.createElementNS(svgns, "text");
+			this.minText.setAttribute('x', start[0] - 5);
+			this.minText.setAttribute('y', start[1] + 5);
+			this.minText.setAttribute('fill', 'black');
+			this.minText.setAttribute('class', 'minText');
+			this.minText.setAttribute('dominant-baseline', 'hanging');
+			this.svgContainer.appendChild(this.minText);
 
-        this.maxText = document.createElementNS(svgns, "text");
-        this.maxText.setAttribute('x', end[0] + 5);
-        this.maxText.setAttribute('y', end[1] + 5);
-        this.maxText.setAttribute('fill', 'black');
-        this.maxText.setAttribute('class', 'maxText');
-        this.maxText.setAttribute('dominant-baseline', 'hanging');
-        this.svgContainer.appendChild(this.maxText);
+			this.maxText = document.createElementNS(svgns, "text");
+			this.maxText.setAttribute('x', end[0] + 5);
+			this.maxText.setAttribute('y', end[1] + 5);
+			this.maxText.setAttribute('fill', 'black');
+			this.maxText.setAttribute('class', 'maxText');
+			this.maxText.setAttribute('dominant-baseline', 'hanging');
+			this.svgContainer.appendChild(this.maxText);
+		}
     }
 
     computeAngle(value) {
@@ -149,19 +154,28 @@ class Gauge {
     drawText() {
         this.labelSpan.textContent = this.title;
         this.valueSpan.textContent = this.value + this.units;
-        this.minText.textContent = this.low;
-        this.maxText.textContent = this.high;
     }
 
+	drawMinMax() {
+        this.minText.textContent = this.low;
+        this.maxText.textContent = this.high;
+	}
+
     draw() {
-        this.drawFilledGauge();
-        this.drawBaseGauge();
-        this.drawText();
+		if (!this.noDraw) {
+			this.drawFilledGauge();
+			this.drawBaseGauge();
+			this.drawMinMax();
+		}
+		this.drawText();
     }
 
     setValue(newVal) {
         this.value = newVal;
-        this.drawFilledGauge();
+		if (!this.noDraw) {
+			this.drawFilledGauge();
+			this.drawMinMax();
+		}
         this.drawText();
     }
 }
