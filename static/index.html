@@ -8,6 +8,9 @@
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
     <svg width="800px" height="480px" id="svgId">
         <style>
+			.fillGauge {
+				transition: fill 3000ms ease 0s;
+			}
             .valueText {
                 font-family: Helvetica;
                 text-anchor: middle;
@@ -26,12 +29,12 @@
             .minText {
                 font-family: Helvetica;
                 text-anchor: end;
-                font-size: 20px;
+                font-size: 16px;
             }
             .maxText {
                 font-family: Helvetica;
                 text-anchor: start;
-                font-size: 20px;
+                font-size: 16px;
             }
         </style>
     </svg>
@@ -52,9 +55,11 @@
         let motorTemp = new Gauge(config.motorTemp);
         let maxCellVolt = new Gauge(config.maxCellVolt);
 
+		/*
 		let faults = new FaultBox({
 			"canvasId": "canvasId"
 		});
+		*/
 
         batteryCurrent.setValue(2.4);
         motorCurrent.setValue(2.4);
@@ -69,6 +74,7 @@
         motorTemp.setValue(45);
         maxCellVolt.setValue(5);
 
+/*
 		setTimeout(() => {
 		faults.setErrorMessages([
 			"Discharge Limit",
@@ -101,9 +107,12 @@
 		setTimeout(() => {
 			faults.setErrorMessages([]);
 		}, 5000);
+*/
 
+		let i = 0;
 		setInterval(() => {
-			let rand = Math.floor(Math.random() * 60);
+			let rand = i; //Math.floor(Math.random() * 60);
+			i++;
 			speed.setValue(rand);
 		}, 1000);
     </script>

@@ -13,6 +13,7 @@ class Gauge {
         this.high = config.high;
         this.title = config.title;
         this.units = config.units;
+		this.noDraw = config.noDraw;
 
         this.value = this.low;
         this.svgContainer = document.getElementById(config.svgId);
@@ -25,15 +26,18 @@ class Gauge {
         let start = [this.r2 * Math.cos(this.startAngle) + this.cx, this.r2 * Math.sin(this.startAngle) + this.cy];
         let end = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
 
-        this.gaugeFill = document.createElementNS(svgns, "path");
-        this.gaugeFill.setAttribute('stroke', 'transparent');
-        this.gaugeFill.setAttribute('fill', '#0f0');
-        this.svgContainer.appendChild(this.gaugeFill);
+		if (!this.noDraw) {
+			this.gaugeFill = document.createElementNS(svgns, "path");
+			this.gaugeFill.setAttribute('stroke', 'transparent');
+			this.gaugeFill.setAttribute('fill', '#0f0');
+			this.gaugeFill.setAttribute('class', 'fillGauge');
+			this.svgContainer.appendChild(this.gaugeFill);
 
-        this.gaugeBorder = document.createElementNS(svgns, "path");
-        this.gaugeBorder.setAttribute('stroke', 'black');
-        this.gaugeBorder.setAttribute('fill', 'transparent');
-        this.svgContainer.appendChild(this.gaugeBorder);
+			this.gaugeBorder = document.createElementNS(svgns, "path");
+			this.gaugeBorder.setAttribute('stroke', 'black');
+			this.gaugeBorder.setAttribute('fill', 'transparent');
+			this.svgContainer.appendChild(this.gaugeBorder);
+		}
 
         this.valueText = document.createElementNS(svgns, "text");
         this.valueText.setAttribute('x', this.cx);
@@ -117,22 +121,31 @@ class Gauge {
         this.gaugeFill.setAttribute('d', svgString);
     }
 
+	drawMinMax() {
+        this.minText.textContent = this.low;
+        this.maxText.textContent = this.high;
+	}
+
     drawText() {
         this.labelSpan.textContent = this.title;
         this.valueSpan.textContent = this.value + this.units;
-        this.minText.textContent = this.low;
-        this.maxText.textContent = this.high;
     }
 
     draw() {
-        this.drawFilledGauge();
-        this.drawBaseGauge();
+		if (!this.noDraw) {
+			this.drawFilledGauge();
+			this.drawBaseGauge();
+			this.drawMinMax();
+		}
         this.drawText();
     }
 
     setValue(newVal) {
         this.value = newVal;
-        this.drawFilledGauge();
+		if (!this.noDraw) {
+			this.drawFilledGauge();
+			this.drawMinMax();
+		}
         this.drawText();
     }
 }
