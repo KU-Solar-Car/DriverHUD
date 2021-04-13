@@ -8,9 +8,6 @@
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
     <svg width="800px" height="480px" id="svgId">
         <style>
-			.fillGauge {
-				transition: fill 3000ms ease 0s;
-			}
             .valueText {
                 font-family: Helvetica;
                 text-anchor: middle;
@@ -29,12 +26,17 @@
             .minText {
                 font-family: Helvetica;
                 text-anchor: end;
-                font-size: 16px;
+                font-size: 20px;
             }
             .maxText {
                 font-family: Helvetica;
                 text-anchor: start;
-                font-size: 16px;
+                font-size: 20px;
+            }
+            .gaugePath {
+                stroke-linecap: butt;
+                transform: rotate(135deg);
+                transition: stroke-dashoffset 500ms ease-in-out;
             }
         </style>
     </svg>
