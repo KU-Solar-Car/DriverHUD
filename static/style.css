@@ -1,87 +1,12 @@
 * {
 	box-sizing: border-box;
 }
+
 html, body {
 	margin: 0;
 	overflow: hidden;
-}
-#bg {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: -100;
-	opacity: 0.2;
-	background: url(images/background.jpg) center/cover no-repeat;
-	transform: scaleX(-1); /* Flip image horizontally */
-}
-#error {
-	display: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	text-align: center;
-	color: white;
-	font: bold 5vw sans-serif;
-	background: red;
-	z-index: 1000;
-}
-#info, #power-info {
-	width: 40vw;
-	right: 1vw;
-}
-#info {
-	position: absolute;
-	top: 2vh;
-	text-align: center;
-	font: 8vw sans-serif;
-	padding: 0.5vh;
-	font-family: monospace;
-	font-weight: bold;
-	-webkit-text-stroke: 2px white;
-}
-#speedometer-container {
-	position: absolute;
-	top: 8vh;
-	left: 1vw;
-	width: 55vw;
-	height: 50vw;
-}
-#speedometer {
-	width: 100%;
-	height: 100%;
-}
-#speed {
-	position: absolute;
-	left: 0;
-	bottom: 2%;
-	width: 100%;
-	font: bold 12vw sans-serif;
-	text-align: center;
-}
-#power-info {
-	position: absolute;
-	top: 43vh;
-	height: 16vh;
-	font: 3vw sans-serif;
-	border: 2px solid gold;
-	background: white;
-	border-radius: 8px;
-}
-td.label {
-	text-align: right;
-	padding-right: 0.2em;
-}
-.sensor {
-	display: inline-block;
-	font-family: monospace;
-	background: black;
-	color: white;
-	border: 1px solid gold;
-	border-radius: 8px;
-	padding: 0 4px 0 4px;
+	background-color: #fff;
+	color: #000;
 }
 
 /* Webcam is displayed at 4:3, despite actually being 16:9 */
@@ -91,11 +16,74 @@ td.label {
 	background: black url(images/no-camera.png) center/contain no-repeat;
 }
 
-#logo {
-	position: absolute;
-	bottom: 5vh;
-	right: 1vw;
-	width: 40vw;
-	height: 30vh;
-	object-fit: contain;
+.grid {
+	height: 100vh;
+	width: 100vw;
+	background-color: #fff;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 20vh 60vh 1fr;
+	grid-template-areas: 
+		"error error error"
+		"svolt speed pvolt"
+		"soc   time  ptemp";
+}
+
+#error-region {
+	grid-area: error;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: column;
+	font-size: 10vh;
+}
+
+.no-error {
+	color: #000;
+	background-color: #0f6;
+}
+
+.error {
+	color: #000;
+	background-color: #f30;
+}
+
+.svolt {
+	grid-area: svolt;
+}
+
+.speed {
+	grid-area: speed;
+}
+
+.pvolt {
+	grid-area: pvolt;
+}
+
+.soc {
+	grid-area: soc;
+}
+
+.time {
+	grid-area: time;
+}
+
+.ptemp {
+	grid-area: ptemp;
+}
+
+.dataViewer {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	flex-direction: column;
+	color: #000;
+	font-size: 10vh;
+}
+
+#error-list {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
 }

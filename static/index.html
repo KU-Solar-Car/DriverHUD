@@ -2,129 +2,121 @@
 <html>
 <head>
 	<title>Driver HUD</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<script src="gauge.min.js"></script>
-	<script type="text/javascript">
-		const MAX_SPEED = 60; // mph, must be multiple of 10
-		
-		let speedometer;
-	
-		window.onload = () => {
-			initSpeedometer();
-			
-			clockTick();
-			updateData();
-			
-			setInterval(clockTick, 1000);
-			setInterval(updateData, 100);
-		}
-		
-		function initSpeedometer() {
-			let ticks = [];
-			for (let i = 0; i <= MAX_SPEED/10; i++) ticks.push(i*10);
-			speedometer = new Gauge(document.getElementById("speedometer")).setOptions({
-				angle: -0.2, // The span of the gauge arc
-				lineWidth: 0.44, // The line thickness
-				radiusScale: 0.75, // Relative radius, change this if clipping off canvas
-				pointer: {
-					length: 0.8, // // Relative to gauge radius
-					strokeWidth: 0.035, // The thickness
-					color: '#EB0909' // Fill color
-				},
-				limitMax: true,     // If false, max value increases automatically if value > maxValue
-				limitMin: true,     // If true, the min value of the gauge will be fixed
-				colorStart: '#48a84c',
-				colorStop: '#64ed6b', 
-				strokeColor: '#E0E0E0',
-				generateGradient: true,
-				highDpiSupport: true,     // High resolution support
-				// renderTicks is Optional
-				renderTicks: {
-					divisions: MAX_SPEED/10,
-					divWidth: 1.1,
-					divLength: 0.7,
-					divColor: '#333333',
-					subDivisions: 2,
-					subLength: 0.5,
-					subWidth: 0.6,
-					subColor: '#666666'
-				},
-				staticLabels: {
-					font: "4vw sans-serif",  // Specifies font
-					labels: ticks,  // Print labels at these values
-					color: "#000000",  // Optional: Label text color
-					fractionDigits: 0  // Optional: Numerical precision. 0=round off.
-				},
-			});
-			speedometer.maxValue = MAX_SPEED;
-			speedometer.setMinValue(0);
-			speedometer.animationSpeed = 16;
-			speedometer.setTextField(document.getElementById("speed"));
-			speedometer.set(0);
-		}
-
-		function clockTick() {
-			let d = new Date();
-			let hour = ((d.getHours() % 12) || 12);
-			//hour = (hour < 10 ? "&nbsp;" : "") + hour; // Pad hour
-			let colon = d.getSeconds() % 2 ? ":" : " ";
-			let min = (d.getMinutes() < 10 ? "0" : "") + d.getMinutes()
-			let amOrPm = d.getHours() >= 12 ? "pm" : "am";
-			document.getElementById("clock").innerHTML = hour + colon + min + amOrPm;
-		}
-		
-		function readSensor(endpoint, callback) {
-			let xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					callback(this.response);
-				} else {
-					// Display error to driver?
-				}
-			};
-			xhttp.open("GET", endpoint + "?" + Date.now(), true); // Date.now() prevents caching
-			xhttp.send();
-		}
-
-		function populateData(data) {
-			console.log(data)
-			speedometer.set(0) //data["speed"])
-			document.getElementById("battery-percent").innerText = data["soc"]
-			document.getElementById("temperature").innerHTML = data["temp"]
-		} 
-
-		function updateData() {
-			readSensor("/get-data", data => populateData(JSON.parse(data)));
-		}
-
-		// Not yet implemented in Flask
-		/*function updateError() {
-			readSensor("/get-bps-error", error => document.getElementById("error").style.display = error ? "block" : "none");
-		}*/
-	</script>
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
-	<div id="bg"></div>
-	<img id="logo" src="images/logo.png">
-	<div id="error">
-		BPS Fault
-	</div>
-	<div id="info">
-		<span id="clock">--:-- --</span><br><span id="battery-percent">--</span>%
-	</div>
-	<div id="speedometer-container">
-		<canvas id="speedometer"></canvas>
-		<div id="speed"></div>
-	</div>
-	<table id="power-info">
-		<tr>
-			<td class="label">Battery temperature</td>
-			<td><span class="sensor" id="temperature">60</span>&deg;C</td>
-		</tr>
-		<tr>
-			<td class="label">Solar power</td>
-			<td><span class="sensor">400</span>W</td>
-		</tr>	
-	</table>
+    <svg width="800px" height="480px" id="svgId">
+        <style>
+            .valueText {
+                font-family: Helvetica;
+                text-anchor: middle;
+                font-size: 24px;
+            }
+            .valueSpan {
+                font-family: Helvetica;
+                text-anchor: middle;
+                font-size: 24px;
+            }
+            .labelSpan {
+                font-family: Helvetica;
+                text-anchor: middle;
+                font-size: 16px;
+            }
+            .minText {
+                font-family: Helvetica;
+                text-anchor: end;
+                font-size: 16px;
+            }
+            .maxText {
+                font-family: Helvetica;
+                text-anchor: start;
+                font-size: 16px;
+            }
+            .gaugePath {
+                stroke-linecap: butt;
+                transform: rotate(135deg);
+                transition: stroke-dashoffset 500ms ease-in-out;
+            }
+        </style>
+    </svg>
+	<script src="config.js"></script>
+    <script src="gauge.js"></script>
+    <script src="faults.js"></script>
+    <script>
+        let batteryCurrent = new Gauge(config.batteryCurrent);
+        let motorCurrent = new Gauge(config.motorCurrent);
+        let solarCurrent = new Gauge(config.solarCurrent);
+        let minCellVolt = new Gauge(config.minCellVolt);
+        let soc = new Gauge(config.soc);
+        let speed = new Gauge(config.speed);
+        let time = new Gauge(config.time);
+        let packVolt = new Gauge(config.packVolt);
+        let minPackTemp = new Gauge(config.minPackTemp);
+        let maxPackTemp = new Gauge(config.maxPackTemp);
+        let motorTemp = new Gauge(config.motorTemp);
+        let maxCellVolt = new Gauge(config.maxCellVolt);
+
+		/*
+		let faults = new FaultBox({
+			"canvasId": "canvasId"
+		});
+		*/
+
+        batteryCurrent.setValue(2.4);
+        motorCurrent.setValue(2.4);
+        solarCurrent.setValue(2.4);
+        minCellVolt.setValue(3.6);
+        soc.setValue(55);
+        speed.setValue(30);
+        time.setValue("10:30pm");
+        packVolt.setValue(90);
+        minPackTemp.setValue(22);
+        maxPackTemp.setValue(26);
+        motorTemp.setValue(45);
+        maxCellVolt.setValue(5);
+
+/*
+		setTimeout(() => {
+		faults.setErrorMessages([
+			"Discharge Limit",
+			"Charger Relay",
+			"Int Hardware",
+			"Int HS Therm",
+			"Int Software",
+			"Max Cell V High",
+			"Min Cell V Low",
+			"Pack Too Hot",
+			"Int Comm",
+			"Cell Balancing",
+			"Weak Cell",
+			"Low Cell Voltage",
+			"Open Wiring",
+			"Current Sensor",
+			"Max Cell > 5V",
+			"Cell ASIC",
+			"Weak Pack",
+			"Fan Monitor",
+			"Thermistor",
+			"Ext Comm",
+			"Redundant PS",
+			"High Volt Iso",
+			"Input PS",
+			"Charge Limit"
+		]);
+		}, 10000);
+
+		setTimeout(() => {
+			faults.setErrorMessages([]);
+		}, 5000);
+*/
+
+		let i = 0;
+		setInterval(() => {
+			let rand = i; //Math.floor(Math.random() * 60);
+			i++;
+			speed.setValue(rand);
+		}, 1000);
+    </script>
 </body>
 </html>
