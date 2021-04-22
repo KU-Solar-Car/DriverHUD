@@ -1,8 +1,8 @@
-const column1 = 80; // 32 + 80;
-const column2 = 240; // 32 + 80;
-const column3 = 400; // 32 + 160 + 32 + 80;
-const column4 = 560; // 800 - column3;
-const column5 = 720; // 800 - column2;
+const column1 = 80;
+const column2 = 240;
+const column3 = 400;
+const column4 = 560;
+const column5 = 720;
 
 const row1 = 80;
 const row2 = 240;
@@ -88,7 +88,7 @@ let config = {
         "high": 1440,
         "title": "Time",
         "units": "",
-		"noDraw": true
+        "noDraw": true
     },
     "packVolt": {
         "svgId": "svgId",
