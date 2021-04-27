@@ -1,24 +1,27 @@
 #!/usr/bin/env/ python3
 # This script must run on Pi startup
 
+import can
 import json
 import logging
-import os
-import queue
 import sys
-import time
 
 from flask import Flask
-import serial
 
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
 
 stats = {
+    "batteryCurrent": 0,
+    "motorCurrent": 0,
+    "solarCurrent": 0,
+    "minCellVolt": 0,
     "soc": 0,
-    "temp": 0,
-    "pvolt": 0,
-    "svolt": 0,
     "speed": 0,
+    "packVolt": 0,
+    "minPackTemp": 0,
+    "maxPackTemp": 0,
+    "motorTemp": 0,
+    "maxCellVolt": 0,
     "error": []
 }
 
@@ -51,33 +54,48 @@ error_messages = [
     "Charge Limit Enforcement" # Charge Limit
 ]
 
+def handleTwoBytes(b):
+    return (int(b[0]) << 8) + int(b[1])
+
+class DataListener(can.Listener):
+    def __init__(self):
+        pass
+
+    def on_message_received(self, msg):
+        if msg.arbitration_id == 0x6B0:
+            stats["packVolt"] = handleTwoBytes(msg.data[4:6]) / 10
+            stats["soc"] = int(msg.data[6]) / 2
+        elif msg.arbitration_id == 0x6B1:
+            stats["minPackTemp"] = int(msg.data[5]) 
+            stats["maxPackTemp"] = int(msg.data[4])
+        elif msg.arbitration_id == 0x6B2:
+            stats["minCellVolt"] = handleTwoBytes(msg.data[0:2]) / 10000
+            stats["maxCellVolt"] = handleTwoBytes(msg.data[3:5]) / 10000
+
 app = Flask(__name__)
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1) 
 handler = logging.FileHandler('/home/pi/log/hud.log')
 handler.setLevel(logging.ERROR)
 app.logger.addHandler(handler)
 
 @app.route('/get-data')
 def get_data():
-    line = ser.readline().decode("ascii")
-    ser.flush()
-    if line:
-        line = line.strip()
-        if len(line.split()) == 6:
-            line_parts = line.split()
-            stats["soc"] = line_parts[0]
-            stats["temp"] = line_parts[1]
-            stats["pvolt"] = line_parts[2]
-            stats["svolt"] = line_parts[3]
-            stats["speed"] = line_parts[4]
-            error_str = bin(int(line_parts[5], 16))[2:].zfill(24)
-            stats["error"] = [
-                error_messages[i] for i, val in enumerate(error_str[::-1]) if val == "1"
-            ]
-        else:
-            app.logger.error(line)
     return json.dumps(stats)
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=True)
+    try:
+        bus = can.interface.Bus(channel='can0', bustype='socketcan_native', bitrate=250000)
+        # establish interface w CAN BUS
+        reader = DataListener()
+        notifier = can.Notifier(bus,
+                                listeners=[reader],
+                                timeout=5.0)
+
+        app.logger.error("Started can network")
+
+    except Error as e:
+        app.logger.error('Cannot find PiCan board')
+        app.logger.error(e)
+        sys.exit("Cannot find PiCAN board")
+
+    app.run()
 

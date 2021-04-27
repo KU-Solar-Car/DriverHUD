@@ -1,4 +1,3 @@
-const svgns = "http://www.w3.org/2000/svg";
 
 class Gauge {
     startAngle = 3 * Math.PI / 4;
@@ -15,6 +14,7 @@ class Gauge {
         this.units = config.units;
 		this.noDraw = config.noDraw;
 
+		this.svgns = "http://www.w3.org/2000/svg";
         let averageR = (this.r1 + this.r2) / 2;
         this.circumference = 2 * Math.PI * averageR;
 
@@ -30,7 +30,7 @@ class Gauge {
         let end = [this.r2 * Math.cos(this.endAngle) + this.cx, this.r2 * Math.sin(this.endAngle) + this.cy];
 
 		if (!this.noDraw) {
-			this.gaugeFill = document.createElementNS(svgns, "circle");
+			this.gaugeFill = document.createElementNS(this.svgns, "circle");
 			this.gaugeFill.setAttribute('cx', this.cx);
 			this.gaugeFill.setAttribute('cy', this.cy);
 			this.gaugeFill.setAttribute('r', (this.r1 + this.r2) / 2);
@@ -43,20 +43,20 @@ class Gauge {
 			this.gaugeFill.setAttribute('class', 'gaugePath');
 			this.svgContainer.appendChild(this.gaugeFill);
 
-			this.gaugeBorder = document.createElementNS(svgns, "path");
+			this.gaugeBorder = document.createElementNS(this.svgns, "path");
 			this.gaugeBorder.setAttribute('stroke', 'black');
 			this.gaugeBorder.setAttribute('fill', 'transparent');
 			this.svgContainer.appendChild(this.gaugeBorder);
 		}
 
-        this.valueText = document.createElementNS(svgns, "text");
+        this.valueText = document.createElementNS(this.svgns, "text");
         this.valueText.setAttribute('x', this.cx);
         this.valueText.setAttribute('y', this.cy);
         this.valueText.setAttribute('fill', 'black');
         this.valueText.setAttribute('class', 'valueText');
         this.svgContainer.appendChild(this.valueText);
 
-        this.labelSpan = document.createElementNS(svgns, "tspan");
+        this.labelSpan = document.createElementNS(this.svgns, "tspan");
         this.labelSpan.setAttribute('x', this.cx);
         this.labelSpan.setAttribute('y', this.cy - 5);
         this.labelSpan.setAttribute('fill', 'black');
@@ -64,7 +64,7 @@ class Gauge {
         this.labelSpan.setAttribute('dominant-baseline', 'auto');
         this.valueText.appendChild(this.labelSpan);
 
-        this.valueSpan = document.createElementNS(svgns, "tspan");
+        this.valueSpan = document.createElementNS(this.svgns, "tspan");
         this.valueSpan.setAttribute('x', this.cx);
         this.valueSpan.setAttribute('y', this.cy + 5);
         this.valueSpan.setAttribute('fill', 'black');
@@ -73,7 +73,7 @@ class Gauge {
         this.valueText.appendChild(this.valueSpan);
 
 		if (!this.noDraw) {
-			this.minText = document.createElementNS(svgns, "text");
+			this.minText = document.createElementNS(this.svgns, "text");
 			this.minText.setAttribute('x', start[0] - 5);
 			this.minText.setAttribute('y', start[1] + 5);
 			this.minText.setAttribute('fill', 'black');
@@ -81,7 +81,7 @@ class Gauge {
 			this.minText.setAttribute('dominant-baseline', 'hanging');
 			this.svgContainer.appendChild(this.minText);
 
-			this.maxText = document.createElementNS(svgns, "text");
+			this.maxText = document.createElementNS(this.svgns, "text");
 			this.maxText.setAttribute('x', end[0] + 5);
 			this.maxText.setAttribute('y', end[1] + 5);
 			this.maxText.setAttribute('fill', 'black');

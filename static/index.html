@@ -36,14 +36,30 @@
             .gaugePath {
                 stroke-linecap: butt;
                 transform: rotate(135deg);
-                transition: stroke-dashoffset 500ms ease-in-out;
+                transition: stroke-dashoffset 100ms ease-in-out;
             }
+			.faultBox {
+				fill: rgba(255, 0, 0, 0.4);
+			}
         </style>
     </svg>
 	<script src="config.js"></script>
     <script src="gauge.js"></script>
     <script src="faults.js"></script>
     <script>
+		let requestData = (endpoint, callback) => {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					callback(JSON.parse(this.responseText));
+				} else {
+					// Display error to driver?
+				}
+			};
+			xhttp.open("GET", endpoint + "?" + Date.now(), true); // Date.now() prevents caching
+			xhttp.send();
+		};
+
         let batteryCurrent = new Gauge(config.batteryCurrent);
         let motorCurrent = new Gauge(config.motorCurrent);
         let solarCurrent = new Gauge(config.solarCurrent);
@@ -57,24 +73,30 @@
         let motorTemp = new Gauge(config.motorTemp);
         let maxCellVolt = new Gauge(config.maxCellVolt);
 
-		/*
 		let faults = new FaultBox({
-			"canvasId": "canvasId"
+			"svgId": "svgId"
 		});
-		*/
+		faults.draw();
 
-        batteryCurrent.setValue(2.4);
-        motorCurrent.setValue(2.4);
-        solarCurrent.setValue(2.4);
-        minCellVolt.setValue(3.6);
-        soc.setValue(55);
-        speed.setValue(30);
-        time.setValue("10:30pm");
-        packVolt.setValue(90);
-        minPackTemp.setValue(22);
-        maxPackTemp.setValue(26);
-        motorTemp.setValue(45);
-        maxCellVolt.setValue(5);
+		let updateGauges = (data) => {
+			batteryCurrent.setValue(data["batteryCurrent"]);
+			motorCurrent.setValue(data["motorCurrent"]);
+			solarCurrent.setValue(data["solarCurrent"]);
+			minCellVolt.setValue(data["minCellVolt"]);
+			soc.setValue(data["soc"]);
+			speed.setValue(data["speed"]);
+			packVolt.setValue(data["packVolt"]);
+			minPackTemp.setValue(data["minPackTemp"]);
+			maxPackTemp.setValue(data["maxPackTemp"]);
+			motorTemp.setValue(data["motorTemp"]);
+			maxCellVolt.setValue(data["maxCellVolt"]);
+
+			let d = new Date();
+			let hour = d.getHours().toString().padStart(2, '0');
+			let minute = d.getMinutes().toString().padStart(2, '0');
+			timeString = `${hour}:${minute}`;
+			time.setValue(timeString);
+		}
 
 /*
 		setTimeout(() => {
@@ -111,12 +133,16 @@
 		}, 5000);
 */
 
+		/*
 		let i = 0;
 		setInterval(() => {
 			let rand = i; //Math.floor(Math.random() * 60);
 			i++;
 			speed.setValue(rand);
 		}, 1000);
+		*/
+
+		setInterval(() => {requestData('/get-data', updateGauges)}, 100);
     </script>
 </body>
 </html>
