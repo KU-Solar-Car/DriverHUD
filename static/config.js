@@ -19,7 +19,7 @@ let config = {
         "r1": r1,
         "r2": r2,
         "low": 0,
-        "high": 10,
+        "high": 60,
         "title": "Battery",
         "units": "A"
     },
@@ -30,20 +30,20 @@ let config = {
         "r1": r1,
         "r2": r2,
         "low": 0,
-        "high": 10,
+        "high": 40,
         "title": "Motor",
         "units": "A"
     },
-    "solarCurrent": {
+    "solarVolt": {
         "svgId": "svgId",
         "cx": column4,
         "cy": row1,
         "r1": r1,
         "r2": r2,
         "low": 0,
-        "high": 10,
+        "high": 140,
         "title": "Solar",
-        "units": "A"
+        "units": "V"
     },
     "minCellVolt": {
         "svgId": "svgId",

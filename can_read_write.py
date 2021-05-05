@@ -13,7 +13,7 @@ from flask import Flask
 stats = {
     "batteryCurrent": 0,
     "motorCurrent": 0,
-    "solarCurrent": 0,
+    "solarVolt": 0,
     "minCellVolt": 0,
     "soc": 0,
     "speed": 0,
@@ -63,14 +63,20 @@ class DataListener(can.Listener):
 
     def on_message_received(self, msg):
         if msg.arbitration_id == 0x6B0:
-            stats["packVolt"] = handleTwoBytes(msg.data[4:6]) / 10
-            stats["soc"] = int(msg.data[6]) / 2
+            stats["packVolt"] = round(handleTwoBytes(msg.data[4:6]) / 10, 1)
+            stats["soc"] = round(int(msg.data[6]) / 2, 1)
         elif msg.arbitration_id == 0x6B1:
             stats["minPackTemp"] = int(msg.data[5]) 
             stats["maxPackTemp"] = int(msg.data[4])
         elif msg.arbitration_id == 0x6B2:
-            stats["minCellVolt"] = handleTwoBytes(msg.data[0:2]) / 10000
-            stats["maxCellVolt"] = handleTwoBytes(msg.data[3:5]) / 10000
+            stats["minCellVolt"] = round(handleTwoBytes(msg.data[0:2]) / 10000, 2)
+            stats["maxCellVolt"] = round(handleTwoBytes(msg.data[3:5]) / 10000, 2)
+        elif msg.arbitration_id == 0x700:
+            stats["speed"] = int(msg.data[0]) 
+            stats["motorTemp"] = int(msg.data[7]) 
+            stats["batteryCurrent"] = round(handleTwoBytes(msg.data[1:3]) / 10000, 2)
+            stats["motorCurrent"] = round(handleTwoBytes(msg.data[3:5]) / 10000, 2)
+            stats["solarVoltage"] = round(handleTwoBytes(msg.data[5:7]) / 10000, 2)
 
 app = Flask(__name__)
 handler = logging.FileHandler('/home/pi/log/hud.log')

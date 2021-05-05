@@ -39,7 +39,7 @@
                 transition: stroke-dashoffset 100ms ease-in-out;
             }
 			.faultBox {
-				fill: rgba(255, 0, 0, 0.4);
+				fill: rgba(0, 255, 0, 0.4);
 			}
         </style>
     </svg>
@@ -62,7 +62,7 @@
 
         let batteryCurrent = new Gauge(config.batteryCurrent);
         let motorCurrent = new Gauge(config.motorCurrent);
-        let solarCurrent = new Gauge(config.solarCurrent);
+        let solarVolt = new Gauge(config.solarVolt);
         let minCellVolt = new Gauge(config.minCellVolt);
         let soc = new Gauge(config.soc);
         let speed = new Gauge(config.speed);
@@ -81,7 +81,7 @@
 		let updateGauges = (data) => {
 			batteryCurrent.setValue(data["batteryCurrent"]);
 			motorCurrent.setValue(data["motorCurrent"]);
-			solarCurrent.setValue(data["solarCurrent"]);
+			solarVolt.setValue(data["solarVolt"]);
 			minCellVolt.setValue(data["minCellVolt"]);
 			soc.setValue(data["soc"]);
 			speed.setValue(data["speed"]);
