@@ -4,11 +4,14 @@
 import can
 import json
 import logging
+from math import PI
 import sys
 
 from flask import Flask
 
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
+
+TIRE_DIAMETER = 21.3
 
 stats = {
     "batteryCurrent": 0,
@@ -22,6 +25,7 @@ stats = {
     "maxPackTemp": 0,
     "motorTemp": 0,
     "maxCellVolt": 0,
+    "motorControllerTemp": 0,
     "error": []
 }
 
@@ -54,8 +58,15 @@ error_messages = [
     "Charge Limit Enforcement" # Charge Limit
 ]
 
+motor_errors = [
+
+]
+
 def handleTwoBytes(b):
     return (int(b[0]) << 8) + int(b[1])
+
+def handleTwoBytesLE(b):
+    return (int(b[1]) << 8) + int(b[0])
 
 class DataListener(can.Listener):
     def __init__(self):
@@ -71,12 +82,15 @@ class DataListener(can.Listener):
         elif msg.arbitration_id == 0x6B2:
             stats["minCellVolt"] = round(handleTwoBytes(msg.data[0:2]) / 10000, 2)
             stats["maxCellVolt"] = round(handleTwoBytes(msg.data[3:5]) / 10000, 2)
-        elif msg.arbitration_id == 0x700:
-            stats["speed"] = int(msg.data[0]) 
-            stats["motorTemp"] = int(msg.data[7]) 
-            stats["batteryCurrent"] = round(handleTwoBytes(msg.data[1:3]) / 10000, 2)
-            stats["motorCurrent"] = round(handleTwoBytes(msg.data[3:5]) / 10000, 2)
-            stats["solarVoltage"] = round(handleTwoBytes(msg.data[5:7]) / 10000, 2)
+        elif msg.arbitration_id == 0x0CF11E05:
+            rpm = handleTwoBytesLE(msg.data[0:2]) 
+            stats["speed"] = rpm * PI * TIRE_DIAMETER / 12 / 5280 * 60 
+            stats["motorCurrent"] = round(handleTwoBytesLE(msg.data[2:4]) / 10, 1)
+            # TODO: parse motor errors
+        elif msg.arbitration_id == 0x0CF11F05:
+            stats["motorControllerTemp"] = handleTwoBytesLE(msg.data[2:4]) - 40
+            stats["motorTemp"] = handleTwoBytesLE(msg.data[4:6]) - 30
+
 
 app = Flask(__name__)
 handler = logging.FileHandler('/home/pi/log/hud.log')
