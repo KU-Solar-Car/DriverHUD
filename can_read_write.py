@@ -103,11 +103,11 @@ class DataListener(can.Listener):
             stats["batteryCurrent"] = round(handleTwoBytes(msg.data[0:2]) / 10, 1)
 
             errorNum1 = int(msg.data[2])
-            errors1 = [bms_errors1[i] for i in format(errorNum1, 'b') if i == '1' and motor_errors is not None]
+            errors1 = [bms_errors1[i] for i in format(errorNum1, 'b') if i == '1']
             stats["error"].extend(errors1)
 
             errorNum2 = handleTwoBytes(msg.data[4:6])
-            errors2 = [bms_errors2[i] for i in format(errorNum2, 'b') if i == '1' and motor_errors is not None]
+            errors2 = [bms_errors2[i] for i in format(errorNum2, 'b') if i == '1']
             stats["error"].extend(errors2)
 
         elif msg.arbitration_id == 0x0CF11E05:
@@ -115,7 +115,7 @@ class DataListener(can.Listener):
             stats["speed"] = rpm * PI * TIRE_DIAMETER / 12 / 5280 * 60 
             stats["motorCurrent"] = round(handleTwoBytesLE(msg.data[2:4]) / 10, 1)
             errorNum = handleTwoBytesLE(msg.data[6:8])
-            errors = [motor_errors[i] for i in format(errorNum, 'b') if i == '1' and motor_errors is not None]
+            errors = [motor_errors[i] for i in format(errorNum, 'b') if i == '1' and motor_errors[i] is not None]
             stats["error"].extend(errors)
         elif msg.arbitration_id == 0x0CF11F05:
             stats["motorControllerTemp"] = handleTwoBytesLE(msg.data[2:4]) - 40

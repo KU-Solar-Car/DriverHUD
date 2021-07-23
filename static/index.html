@@ -23,6 +23,11 @@
                 text-anchor: middle;
                 font-size: 16px;
             }
+            .faultSpan {
+                font-family: Helvetica;
+                text-anchor: middle;
+                font-size: 16px;
+            }
             .minText {
                 font-family: Helvetica;
                 text-anchor: end;
@@ -40,6 +45,9 @@
             }
 			.faultBox {
 				fill: rgba(0, 255, 0, 0.4);
+			}
+			.faultBoxError {
+				fill: rgba(255, 0, 0, 0.4);
 			}
         </style>
     </svg>
@@ -76,7 +84,6 @@
 		let faults = new FaultBox({
 			"svgId": "svgId"
 		});
-		faults.draw();
 
 		let updateGauges = (data) => {
 			batteryCurrent.setValue(data["batteryCurrent"]);
@@ -90,6 +97,7 @@
 			maxPackTemp.setValue(data["maxPackTemp"]);
 			motorTemp.setValue(data["motorTemp"]);
 			maxCellVolt.setValue(data["maxCellVolt"]);
+            faults.setErrors(data["error"]);
 
 			let d = new Date();
 			let hour = d.getHours().toString().padStart(2, '0');
@@ -98,9 +106,9 @@
 			time.setValue(timeString);
 		}
 
-/*
-		setTimeout(() => {
-		faults.setErrorMessages([
+        /* Testing purposes
+		setInterval(() => {
+		faults.setErrors([
 			"Discharge Limit",
 			"Charger Relay",
 			"Int Hardware",
@@ -126,21 +134,8 @@
 			"Input PS",
 			"Charge Limit"
 		]);
-		}, 10000);
-
-		setTimeout(() => {
-			faults.setErrorMessages([]);
-		}, 5000);
-*/
-
-		/*
-		let i = 0;
-		setInterval(() => {
-			let rand = i; //Math.floor(Math.random() * 60);
-			i++;
-			speed.setValue(rand);
-		}, 1000);
-		*/
+		}, 2000);
+        */
 
 		setInterval(() => {requestData('/get-data', updateGauges)}, 100);
     </script>
