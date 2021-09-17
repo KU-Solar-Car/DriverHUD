@@ -1,80 +1,107 @@
+let equals = (arr1, arr2) => {
+    if (arr1.length != arr2.length) return false;
+
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] != arr2[i]) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
 class FaultBox {
 	constructor(config) {
-        this.canvas = document.getElementById(config.canvasId);
-        this.ctx = this.canvas.getContext('2d');
+        this.svgContainer = document.getElementById(config.svgId);
 
 		this.errorMessages = [];
 
-		this.cycleCurrent = 0;
+	 	this.svgns = "http://www.w3.org/2000/svg";
 
-		this.img = new Image();
-		this.img.src = 'images/logo.png';
-		this.img.onload = () => {
-			if (this.errorMessages.length == 0) { 
-				this.ctx.drawImage(this.img, 0, this.canvas.height - 96, 160, 96);
-			}
-		};
-
+		this.drawBox();
+        this.drawTextBox();
 		this.draw();
+
+        this.currentIndex = 0;
+        this.changed = false;
 	}
 
 	drawBox() {
-		if (this.errorMessages.length != 0) { 
-			this.ctx.fillStyle = 'rgba(255, 0, 0, 0.4)';
-		} else {
-			this.ctx.fillStyle = 'rgba(0, 255, 0, 0.4)';
-		}
-		this.ctx.fillRect(0, 0, 160, this.canvas.height);
-		if (this.errorMessages.length == 0) { 
-			this.ctx.drawImage(this.img, 0, this.canvas.height - 96, 160, 96);
-		}
+		this.faultBox = document.createElementNS(this.svgns, "rect");
+		this.faultBox.setAttribute('x', 0);
+		this.faultBox.setAttribute('y', 0);
+		this.faultBox.setAttribute('height', 480);
+		this.faultBox.setAttribute('width', 160);
+		this.svgContainer.appendChild(this.faultBox);
 	}
 
-	drawErrors() {
-		if (this.errorMessages.length > 12) {
-			this.intervalHandler = setInterval(this.cycleErrors.bind(this), 2000);
-		}
-		let i = 0;
-		for (let err of this.errorMessages) {
-			if (i >= 12) {
-				continue;
-			}
+    drawTextBox() {
+        this.faultText = document.createElementNS(this.svgns, "text");
+        this.faultText.setAttribute("x", 0);
+        this.faultText.setAttribute("y", 0);
+        this.faultText.setAttribute("height", 480);
+        this.faultText.setAttribute("width", 160);
+        this.faultText.setAttribute("fill", "black");
+        this.faultText.setAttribute("class", "faultText");
+        this.svgContainer.appendChild(this.faultText);
 
-			this.ctx.textAlign = 'left';
-			this.ctx.textBaseline = 'top';
-			this.ctx.fillStyle = '#000';
-			this.ctx.font = '20px arial';
-			this.ctx.fillText(err, 10, i * 40 + 10);
+        this.errorSpans = []
 
-			i++;
-		}
-	}
-
-	cycleErrors() {
-		this.ctx.clearRect(0, 0, 160, this.canvas.height);
-		this.drawBox();
-		for (let i = this.cycleCurrent; i < this.cycleCurrent + 12; i++) {
-			this.ctx.textAlign = 'left';
-			this.ctx.textBaseline = 'top';
-			this.ctx.fillStyle = '#000';
-			this.ctx.font = '20px arial';
-			this.ctx.fillText(this.errorMessages[i % this.errorMessages.length], 10, (i - this.cycleCurrent) * 40 + 10);
-		}
-
-		this.cycleCurrent += 1;
-		this.cycleCurrent = this.cycleCurrent % this.errorMessages.length;
-		console.log(this.cycleCurrent);
-	}
+        for (let i = 0; i < 12; i++) {
+            this.errorSpans[i] = document.createElementNS(this.svgns, "tspan");
+            this.errorSpans[i].setAttribute("x", 80);
+            this.errorSpans[i].setAttribute("y", i * 40 + 20);
+            this.errorSpans[i].setAttribute("fill", "black");
+            this.errorSpans[i].setAttribute("class", "faultSpan")
+            this.faultText.appendChild(this.errorSpans[i]);
+        }
+    }
 
 	draw() {
-		clearInterval(this.intervalHandler);
-		this.ctx.clearRect(0, 0, 160, this.canvas.height);
-		this.drawBox();
-		this.drawErrors();
+        for (let i = 0; i < 12; i++) {
+            this.errorSpans[i].textContent = "";
+        }
+
+        if (this.errorMessages.length != 0) {
+            this.faultBox.setAttribute('class', 'faultBoxError');
+            if (this.errorMessages.length <= 12) {
+                for (let i = 0; i < this.errorMessages.length; i++) {
+                    this.errorSpans[i].textContent = this.errorMessages[i];
+                }
+            } else {
+                for (let i = 0; i < 12; i++) {
+                    let indexToGet = (i + this.currentIndex) % this.errorMessages.length;
+                    this.errorSpans[i].textContent = this.errorMessages[indexToGet];
+                }
+            }
+        } else {
+            this.faultBox.setAttribute('class', 'faultBox');
+        }
 	}
 
-	setErrorMessages(errors) {
-		this.errorMessages = errors;
-		this.draw();
-	}
+    cycleErrors() {
+        if (this.changed) {
+            this.currentIndex = 0;
+            this.changed = false;
+        } else {
+            this.currentIndex += 1;
+        }
+        this.draw();
+        console.log(this.currentIndex);
+    }
+
+    setErrors(errorMessages) {
+        if (!equals(this.errorMessages, errorMessages)) {
+            this.changed = true;
+            clearInterval(this.intervalHandler);
+            if (errorMessages.length > 12) {
+                this.intervalHandler = setInterval(this.cycleErrors.bind(this), 2000);
+            }
+        } else {
+            this.changed = false;
+        }
+        this.errorMessages = errorMessages;
+        console.log(this.errorMessages, this.changed);
+        this.draw();
+    }
 }
