@@ -1,10 +1,12 @@
-#!/usr/bin/env/ python3
+#!/usr/bin/env python3
 # This script must run on Pi startup
 
-import can
+#import can
+import serial
+import time
 import json
 import logging
-from math import PI
+from math import pi
 import sys
 
 from flask import Flask
@@ -13,25 +15,28 @@ from flask import Flask
 
 TIRE_DIAMETER = 21.3
 
+ser = serial.Serial('/dev/ttyACM0', 115200)
+#ser.open()
+
 stats = {
-    "batteryCurrent": 0,
-    "motorCurrent": 0,
-    "solarVolt": 0,
-    "minCellVolt": 0,
-    "soc": 0,
-    "speed": 0,
-    "packVolt": 0,
-    "minPackTemp": 0,
-    "maxPackTemp": 0,
-    "motorTemp": 0,
-    "maxCellVolt": 0,
-    "motorControllerTemp": 0,
+    "batteryCurrent": 23,
+    "motorCurrent": 18,
+    "solarVolt": 83,
+    "minCellVolt": 3.3,
+    "soc": 62,
+    "speed": 27,
+    "packVolt": 68,
+    "minPackTemp": 38,
+    "maxPackTemp": 54,
+    "motorTemp": 68,
+    "maxCellVolt": 3.8,
+    "motorControllerTemp": 45,
     "error": []
 }
 
 bms_errors1 = [
     # DTC #1 Status
-    "Discharge Limit Enforcement", # Discharge Limit 
+    "Discharge Limit Enforcement", # Discharge Limit
     "Charger Safety Relay", # Charger Relay
     "Internal Hardware", # Int Hardware
     "Internal Heatsink Thermistor", # Int HS Therm
@@ -85,9 +90,9 @@ def handleTwoBytes(b):
 def handleTwoBytesLE(b):
     return (int(b[1]) << 8) + int(b[0])
 
-class DataListener(can.Listener):
-    def __init__(self):
-        pass
+#class DataListener(can.Listener):
+ #   def __init__(self):
+  #      pass
 
     def on_message_received(self, msg):
         if msg.arbitration_id == 0x6B0:
@@ -112,7 +117,7 @@ class DataListener(can.Listener):
 
         elif msg.arbitration_id == 0x0CF11E05:
             rpm = handleTwoBytesLE(msg.data[0:2]) 
-            stats["speed"] = rpm * PI * TIRE_DIAMETER / 12 / 5280 * 60 
+            stats["speed"] = rpm * pi * TIRE_DIAMETER / 12 / 5280 * 60 
             stats["motorCurrent"] = round(handleTwoBytesLE(msg.data[2:4]) / 10, 1)
             errorNum = handleTwoBytesLE(msg.data[6:8])
             errors = [motor_errors[i] for i in format(errorNum, 'b') if i == '1' and motor_errors[i] is not None]
@@ -138,23 +143,26 @@ app = Flask(__name__)
 
 @app.route('/get-data')
 def get_data():
-    return json.dumps(stats)
+	ser.write(bytes('d', encoding='utf8'))
+	stats = ser.readline()
+	#return json.dumps(stats)
+	return stats
 
 if __name__ == '__main__':
-    try:
-        bus = can.interface.Bus(channel='can0', bustype='socketcan_native', bitrate=250000)
+	try:
+        #bus = can.interface.Bus(channel='can0', bustype='socketcan_native', bitrate=250000)
         # establish interface w CAN BUS
-        reader = DataListener()
-        notifier = can.Notifier(bus,
-                                listeners=[reader],
-                                timeout=5.0)
+       #reader = DataListener()
+        #notifier = can.Notifier(bus,
+        #                        listeners=[reader],
+         #                       timeout=5.0)
 
-        app.logger.error("Started can network")
-
-    except Error as e:
-        app.logger.error('Cannot find PiCan board')
-        app.logger.error(e)
-        sys.exit("Cannot find PiCAN board")
-
-    app.run()
+        #app.logger.error("Started can network")	
+		time.sleep(3)
+		ser.write(bytes('d', encoding='utf8'))
+	except Exception as e:
+		app.logger.error('Cannot Establish Serial Connection')
+		app.logger.error(e)
+		#sys.exit("Cannot find PiCAN board")
+	app.run(host="0.0.0.0")
 
