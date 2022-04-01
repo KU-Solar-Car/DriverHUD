@@ -55,49 +55,59 @@
     <script src="gauge.js"></script>
     <script src="faults.js"></script>
     <script>
-		let requestData = (endpoint, callback) => {
+		/*let requestData = (endpoint, callback) => {
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					callback(JSON.parse(this.responseText));
+					setTimeout(() => requestData('/get-data', updateGauges), 1000);
 				} else {
-					// Display error to driver?
+					setTimeout(() => requestData('/get-data', updateGauges), 3000);
+					//Tell Driver about this
 				}
+				//setTimeout(() => requestData('/get-data', updateGauges), 20);
 			};
 			xhttp.open("GET", endpoint + "?" + Date.now(), true); // Date.now() prevents caching
 			xhttp.send();
-		};
+		};*/
 
-        let batteryCurrent = new Gauge(config.batteryCurrent);
-        let motorCurrent = new Gauge(config.motorCurrent);
-        let solarVolt = new Gauge(config.solarVolt);
-        let minCellVolt = new Gauge(config.minCellVolt);
-        let soc = new Gauge(config.soc);
-        let speed = new Gauge(config.speed);
+	let requestData = (endpoint, callback) => {
+		fetch(endpoint + "?" + Date.now()).then(res => res.json()).then(data => {
+			callback(data);
+			setTimeout(() => requestData('/get-data', updateGauges), 50);
+		}).catch(error => { setTimeout(() => requestData('/get-data', updateGauges), 3000); });
+	};
+
+        let batteryCurrent = new Gauge(config.pack_current);
+        let motorCurrent = new Gauge(config.motor_current);
+        let solarVolt = new Gauge(config.solar_voltage);
+        let minCellVolt = new Gauge(config.min_cell_voltage);
+        let soc = new Gauge(config.pack_soc);
+        let speed = new Gauge(config.gps_speed);
         let time = new Gauge(config.time);
-        let packVolt = new Gauge(config.packVolt);
-        let minPackTemp = new Gauge(config.minPackTemp);
-        let maxPackTemp = new Gauge(config.maxPackTemp);
-        let motorTemp = new Gauge(config.motorTemp);
-        let maxCellVolt = new Gauge(config.maxCellVolt);
+        let packVolt = new Gauge(config.pack_voltage);
+        let minPackTemp = new Gauge(config.min_pack_temp);
+        let maxPackTemp = new Gauge(config.max_pack_temp);
+        let motorTemp = new Gauge(config.motor_temp);
+        let maxCellVolt = new Gauge(config.max_cell_voltage);
 
 		let faults = new FaultBox({
 			"svgId": "svgId"
 		});
 
 		let updateGauges = (data) => {
-			batteryCurrent.setValue(data["batteryCurrent"]);
-			motorCurrent.setValue(data["motorCurrent"]);
-			solarVolt.setValue(data["solarVolt"]);
-			minCellVolt.setValue(data["minCellVolt"]);
-			soc.setValue(data["soc"]);
-			speed.setValue(data["speed"]);
-			packVolt.setValue(data["packVolt"]);
-			minPackTemp.setValue(data["minPackTemp"]);
-			maxPackTemp.setValue(data["maxPackTemp"]);
-			motorTemp.setValue(data["motorTemp"]);
-			maxCellVolt.setValue(data["maxCellVolt"]);
-            faults.setErrors(data["error"]);
+			batteryCurrent.setValue(data["pack_current"]);
+			motorCurrent.setValue(data["motor_current"]);
+			solarVolt.setValue(data["solar_voltage"]);
+			minCellVolt.setValue(data["min_cell_voltage"]);
+			soc.setValue(data["pack_soc"]);
+			speed.setValue(data["gps_speed"]);
+			packVolt.setValue(data["pack_voltage"]);
+			minPackTemp.setValue(data["min_pack_temp"]);
+			maxPackTemp.setValue(data["max_pack_temp"]);
+			motorTemp.setValue(data["motor_temp"]);
+			maxCellVolt.setValue(data["max_cell_voltage"]);
+            //faults.setErrors(data["error"]);
 
 			let d = new Date();
 			let hour = d.getHours().toString().padStart(2, '0');
@@ -137,7 +147,7 @@
 		}, 2000);
         */
 
-		setInterval(() => {requestData('/get-data', updateGauges)}, 100);
+		requestData('/get-data', updateGauges);
     </script>
 </body>
 </html>

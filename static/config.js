@@ -12,7 +12,7 @@ const r1 = 55;
 const r2 = 65;
 
 let config = {
-    "batteryCurrent": {
+    "pack_current": {
         "svgId": "svgId",
         "cx": column2,
         "cy": row1,
@@ -23,7 +23,7 @@ let config = {
         "title": "Battery",
         "units": "A"
     },
-    "motorCurrent": {
+    "motor_current": {
         "svgId": "svgId",
         "cx": column3,
         "cy": row1,
@@ -34,7 +34,7 @@ let config = {
         "title": "Motor",
         "units": "A"
     },
-    "solarVolt": {
+    "solar_voltage": {
         "svgId": "svgId",
         "cx": column4,
         "cy": row1,
@@ -45,7 +45,7 @@ let config = {
         "title": "Solar",
         "units": "V"
     },
-    "minCellVolt": {
+    "min_cell_voltage": {
         "svgId": "svgId",
         "cx": column5,
         "cy": row1,
@@ -56,7 +56,7 @@ let config = {
         "title": "Min Cell",
         "units": "V"
     },
-    "soc": {
+    "pack_soc": {
         "svgId": "svgId",
         "cx": column2,
         "cy": row2,
@@ -67,7 +67,7 @@ let config = {
         "title": "SOC",
         "units": "%"
     },
-    "speed": {
+    "gps_speed": {
         "svgId": "svgId",
         "cx": column3,
         "cy": row2,
@@ -90,7 +90,7 @@ let config = {
         "units": "",
         "noDraw": true
     },
-    "packVolt": {
+    "pack_voltage": {
         "svgId": "svgId",
         "cx": column4,
         "cy": row2,
@@ -101,7 +101,7 @@ let config = {
         "title": "Pack",
         "units": "V"
     },
-    "minPackTemp": {
+    "min_pack_temp": {
         "svgId": "svgId",
         "cx": column2,
         "cy": row3,
@@ -112,7 +112,7 @@ let config = {
         "title": "Min Pack",
         "units": "°C"
     },
-    "maxPackTemp": {
+    "max_pack_temp": {
         "svgId": "svgId",
         "cx": column5,
         "cy": row2,
@@ -123,7 +123,7 @@ let config = {
         "title": "Max Pack",
         "units": "°C"
     },
-    "motorTemp": {
+    "motor_temp": {
         "svgId": "svgId",
         "cx": column4,
         "cy": row3,
@@ -134,7 +134,7 @@ let config = {
         "title": "Motor",
         "units": "°C"
     },
-    "maxCellVolt": {
+    "max_cell_voltage": {
         "svgId": "svgId",
         "cx": column5,
         "cy": row3,
