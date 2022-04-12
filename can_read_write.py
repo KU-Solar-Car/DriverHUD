@@ -97,7 +97,7 @@ def handleTwoBytesLE(b):
 
     '''def on_message_received(self, msg):
         if msg.arbitration_id == 0x6B0:
-            stats["pack_volatge"] = round(handleTwoBytes(msg.data[4:6]) / 10, 1)
+            stats["pack_voltage"] = round(handleTwoBytes(msg.data[4:6]) / 10, 1)
             stats["pack_soc"] = round(int(msg.data[6]) / 2, 1)
         elif msg.arbitration_id == 0x6B1:
             stats["min_pack_temp"] = int(msg.data[5]) 
