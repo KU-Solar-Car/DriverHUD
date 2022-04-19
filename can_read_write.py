@@ -147,9 +147,13 @@ def get_data():
 	ser.reset_input_buffer()
 	ser.write(bytes('d', encoding='utf8'))
 	time.sleep(0.05)
-	stats = ser.readline()
+	#ser.readline() # TEMP
+    for _ range(5):
+        stats = ser.readline()
+        if stats[0] == '{':
+            return stats
 	#return json.dumps(stats)
-	return stats
+	##return stats
 
 if __name__ == '__main__':
 	#try:

@@ -105,9 +105,15 @@
 			packVolt.setValue(data["pack_voltage"]);
 			minPackTemp.setValue(data["min_pack_temp"]);
 			maxPackTemp.setValue(data["max_pack_temp"]);
-			motorTemp.setValue(data["motor_temp"]);
+			if(data["motor_temp"] > data["motor_controller_temp"])
+			{
+				motorTemp.setValue(data["motor_temp"]);
+			}
+			else
+			{
+				motorTemp.setValue(data["motor_controller_temp"]);
+			}
 			maxCellVolt.setValue(data["max_cell_voltage"]);
-            //faults.setErrors(data["error"]);
 			let errorData = [];
 			bms_errors = [
 				//https://www.orionbms.com/manuals/utility_o2/bms_param_dtc_status_1.html
@@ -147,32 +153,55 @@
     			"Charge Limit Enforcement" // Charge Limit
 			];
 
-			/*motor_errors = [
+			motor_errors = [
     			"Motor Angle ID",
     			"Over Voltage",
     			"Low Voltage",
-    			None,
+    			null,
     			"Motor Stall",
     			"Internal Volts Fault",
     			"MC Over Temp",
-    			None,
+    			null,
     			"Internal Reset",
     			"Hall Throttle Error",
     			"Angle Sensor Error",
-    			None,
-    			None,
+    			null,
+    			null,
     			"Motor Over Temp",
     			"Hall Galv Sensor Error"
-			];*/
+			];
+			solar_errors[
+				"Battery Volt Level Reached",
+				"Overtemperature",
+				"No Charge",
+				"Undervoltage"
+			]
 
 			errorNum = parseInt(data["bms_fault"]);
+			errorNum2 = parseInt(data["motor_fault"]);
+			errorNum3 = parseInt(data["solar_faults"]);
 			errors = errorNum.toString(2);
-			//errors1Data = []
+			errors2 = errorNum2.toString(2);
+			errors3 = errorNum3.toString(2);
 			for(var i = 0; i < errors.length; i++)
 			{
 				if(errors[i] == '1' && bms_errors[i])
 				{
 					errorData.push(bms_errors[i]);
+				}
+			}
+			for(var i = 0; i < errors2.length; i++)
+			{
+				if(errors2[i] == '1' && motor_errors[i])
+				{
+					errorData.push(motor_errors[i]);
+				}
+			}
+			for(var i = 0; i < errors3.length; i++)
+			{
+				if(errors3[i] == '1' && solar_errors[i])
+				{
+					errorData.push(solar_errors[i]);
 				}
 			}
 			faults.setErrors(errorData);
