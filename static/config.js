@@ -21,7 +21,8 @@ let config = {
         "low": 0,
         "high": 60,
         "title": "Battery",
-        "units": "A"
+        "units": "A",
+        "format": (value) => value + " A"
     },
     "motor_current": {
         "svgId": "svgId",
@@ -32,7 +33,8 @@ let config = {
         "low": 0,
         "high": 40,
         "title": "Motor",
-        "units": "A"
+        "units": "A",
+        "format": (value) => value + " A"
     },
     "solar_voltage": {
         "svgId": "svgId",
@@ -43,7 +45,8 @@ let config = {
         "low": 0,
         "high": 140,
         "title": "Solar",
-        "units": "V"
+        "units": "V",
+        "format": (value) => value + " V"
     },
     "min_cell_voltage": {
         "svgId": "svgId",
@@ -54,7 +57,8 @@ let config = {
         "low": 2.8,
         "high": 4.2,
         "title": "Min Cell",
-        "units": "V"
+        "units": "V",
+        "format": (value) => value + " V"
     },
     "pack_soc": {
         "svgId": "svgId",
@@ -65,7 +69,8 @@ let config = {
         "low": 0,
         "high": 100,
         "title": "SOC",
-        "units": "%"
+        "units": "%",
+        "format": (value) => value + "%"
     },
     "gps_speed": {
         "svgId": "svgId",
@@ -76,7 +81,8 @@ let config = {
         "low": 0,
         "high": 60,
         "title": "Speed",
-        "units": "mph"
+        "units": "mph",
+        "format": (value) => value + " mph"
     },
     "time": {
         "svgId": "svgId",
@@ -88,7 +94,8 @@ let config = {
         "high": 1440,
         "title": "Time",
         "units": "",
-        "noDraw": true
+        "noDraw": true,
+        "format": (value) => value
     },
     "pack_voltage": {
         "svgId": "svgId",
@@ -99,7 +106,8 @@ let config = {
         "low": 70,
         "high": 110,
         "title": "Pack",
-        "units": "V"
+        "units": "V",
+        "format": (value) => value + " V"
     },
     "min_pack_temp": {
         "svgId": "svgId",
@@ -110,7 +118,8 @@ let config = {
         "low": 0,
         "high": 100,
         "title": "Min Pack",
-        "units": "°C"
+        "units": "°C",
+        "format": (value) => value + "°C"
     },
     "max_pack_temp": {
         "svgId": "svgId",
@@ -121,7 +130,8 @@ let config = {
         "low": 0,
         "high": 100,
         "title": "Max Pack",
-        "units": "°C"
+        "units": "°C",
+        "format": (value) => value + "°C"
     },
     "motor_temp": {
         "svgId": "svgId",
@@ -132,7 +142,8 @@ let config = {
         "low": 0,
         "high": 100,
         "title": "Motor",
-        "units": "°C"
+        "units": "°C",
+        "format": (value) => value + "°C"
     },
     "max_cell_voltage": {
         "svgId": "svgId",
@@ -143,6 +154,7 @@ let config = {
         "low": 2.8,
         "high": 4.2,
         "title": "Max Cell",
-        "units": "V"
+        "units": "V",
+        "format": (value) => value + " V"
     },
 }

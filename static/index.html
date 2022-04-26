@@ -55,21 +55,6 @@
     <script src="gauge.js"></script>
     <script src="faults.js"></script>
     <script>
-		/*let requestData = (endpoint, callback) => {
-			var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					callback(JSON.parse(this.responseText));
-					setTimeout(() => requestData('/get-data', updateGauges), 1000);
-				} else {
-					setTimeout(() => requestData('/get-data', updateGauges), 3000);
-					//Tell Driver about this
-				}
-				//setTimeout(() => requestData('/get-data', updateGauges), 20);
-			};
-			xhttp.open("GET", endpoint + "?" + Date.now(), true); // Date.now() prevents caching
-			xhttp.send();
-		};*/
 
 	let requestData = (endpoint, callback) => {
 		fetch(endpoint + "?" + Date.now()).then(res => res.json()).then(data => {
@@ -170,7 +155,8 @@
     			"Motor Over Temp",
     			"Hall Galv Sensor Error"
 			];
-			solar_errors[
+			
+			solar_errors = [
 				"Battery Volt Level Reached",
 				"Overtemperature",
 				"No Charge",
@@ -211,6 +197,7 @@
 			let minute = d.getMinutes().toString().padStart(2, '0');
 			timeString = `${hour}:${minute}`;
 			time.setValue(timeString);
+			console.log("HERE");
 		}
 
          //Testing purposes

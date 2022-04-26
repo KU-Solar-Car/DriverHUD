@@ -11,14 +11,15 @@ class Gauge {
         this.low = config.low;
         this.high = config.high;
         this.title = config.title;
-        this.units = config.units;
+        //this.units = config.units;
+        this.format = config.format;
 		this.noDraw = config.noDraw;
 
 		this.svgns = "http://www.w3.org/2000/svg";
         let averageR = (this.r1 + this.r2) / 2;
         this.circumference = 2 * Math.PI * averageR;
 
-        this.value = this.low;
+        //this.value = this.low;
         this.svgContainer = document.getElementById(config.svgId);
 
         this.createElements();
@@ -146,14 +147,31 @@ class Gauge {
     }
 
     drawFilledGauge() {
-        let percent = this.computePercent(this.value);
-        let offset = (1 - percent) * (this.circumference * 3 / 4) + (this.circumference / 4);
-        this.gaugeFill.setAttribute('stroke-dashoffset', offset + 'px');
+        if(this.value != undefined)
+        {
+            let percent = this.computePercent(this.value);
+            let offset = (1 - percent) * (this.circumference * 3 / 4) + (this.circumference / 4);
+            this.gaugeFill.setAttribute('stroke-dashoffset', offset + 'px');
+            this.gaugeFill.setAttribute('stroke', '#0f0');
+        }
+        else
+        {
+            this.gaugeFill.setAttribute('stroke-dashoffset',  (this.circumference / 4) + 'px');
+            this.gaugeFill.setAttribute('stroke', '#f00');
+        }
     }
 
     drawText() {
         this.labelSpan.textContent = this.title;
-        this.valueSpan.textContent = this.value + this.units;
+        //this.valueSpan.textContent = this.value + this.units;
+        if(this.value == undefined)
+        {
+            this.valueSpan.textContent = "--"
+        }
+        else
+        {
+            this.valueSpan.textContent = this.format(this.value);
+        }
     }
 
 	drawMinMax() {
