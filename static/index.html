@@ -23,11 +23,6 @@
                 text-anchor: middle;
                 font-size: 16px;
             }
-            .faultSpan {
-                font-family: Helvetica;
-                text-anchor: middle;
-                font-size: 16px;
-            }
             .minText {
                 font-family: Helvetica;
                 text-anchor: end;
@@ -44,13 +39,31 @@
                 transition: stroke-dashoffset 100ms ease-in-out;
             }
 			.faultBox {
-				fill: rgba(0, 255, 0, 0.4);
+				background-color: rgba(0, 255, 0, 0.4);
 			}
 			.faultBoxError {
-				fill: rgba(255, 0, 0, 0.4);
+				background-color: rgba(255, 0, 0, 0.4);
 			}
+			.faultSpan {
+                		font-family: Helvetica;
+                		text-anchor: middle;
+                		font-size: 16px;
+				display: block;
+            		}
+			#faultSect{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 160px;
+				height: 480px;
+				overflow: auto;
+				padding: 4px;
+			}
+			
         </style>
     </svg>
+	<div id="faultSect">
+	</div>
 	<script src="config.js"></script>
     <script src="gauge.js"></script>
     <script src="faults.js"></script>
@@ -103,10 +116,10 @@
 			bms_errors = [
 				//https://www.orionbms.com/manuals/utility_o2/bms_param_dtc_status_1.html
 				// DTC #1 Status
-   				"Discharge Limit Enforcement",// Discharge Limit
+   				"Discharge Limit \nEnforcement",// Discharge Limit
     			"Charger Safety Relay", // Charger Relay
     			"Internal Hardware", // Int Hardware
-    			"Internal Heatsink Thermistor", // Int HS Therm
+    			"Internal Heatsink \nThermistor", // Int HS Therm
     			"Internal Software", // Int Software
     			"High Cell Voltage Too High", // Max Cell V High"
     			"Low Cell Voltage Too Low",  // Min Cell V Low"
@@ -121,7 +134,7 @@
 				null, 
 				// DTC #2 Status
 				"Internal Communication", // Int Comm
-    			"Cell Balancing Stuck Off", // Cell Balancing
+    			"Cell Balancing Stuck \nOff", // Cell Balancing
     			"Weak Cell", // Weak Cell
     			"Low Cell Voltage", // Low Cell Voltage
     			"Open Wiring", // Open Wiring
