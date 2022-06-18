@@ -35,49 +35,7 @@ class FaultBox {
 		this.faultContainer.appendChild(this.faultBox);
 	}
 
-    /*drawTextBox() {
-        this.faultText = document.createElementNS(this.svgns, "text");
-        this.faultText.setAttribute("x", 0);
-        this.faultText.setAttribute("y", 0);
-        this.faultText.setAttribute("height", 480);
-        this.faultText.setAttribute("width", 160);
-        this.faultText.setAttribute("fill", "black");
-        this.faultText.setAttribute("class", "faultText");
-        this.svgContainer.appendChild(this.faultText);
-
-        this.errorSpans = []
-
-        for (let i = 0; i < 12; i++) {
-            this.errorSpans[i] = document.createElementNS(this.svgns, "tspan");
-            this.errorSpans[i].setAttribute("x", 80);
-            this.errorSpans[i].setAttribute("y", i * 40 + 20);
-            this.errorSpans[i].setAttribute("fill", "black");
-            this.errorSpans[i].setAttribute("class", "faultSpan");
-            this.faultText.appendChild(this.errorSpans[i]);
-        }
-    }*/
-
 	draw() {
-        /*for (let i = 0; i < 12; i++) {
-            this.errorSpans[i].textContent = "";
-        }*/
-
-        /*if (this.errorMessages.length != 0) {
-            this.faultBox.setAttribute('class', 'faultBoxError');
-            if (this.errorMessages.length <= 12) {
-                for (let i = 0; i < this.errorMessages.length; i++) {
-                    this.errorSpans[i] = this.errorMessages[i] + "\n\n";
-                }
-            } else {
-                for (let i = 0; i < 12; i++) {
-                    let indexToGet = (i + this.currentIndex) % this.errorMessages.length;
-                    this.errorSpans[i].textContent = this.errorMessages[indexToGet] + "\n\n";
-                }
-            }
-        } else {
-            this.faultBox.setAttribute('class', 'faultBox');
-        }*/
-	
 	this.faultContainer.setAttribute('class', (this.errorMessages.length ==0) ? 'faultBox': 'faultBoxError');
 	//this.errorMessages.join("\n\n");
 	this.faultContainer.innerText = this.errorMessages.join("\n\n");
