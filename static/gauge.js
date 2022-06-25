@@ -71,6 +71,7 @@ class Gauge {
         this.valueSpan.setAttribute('fill', 'black');
         this.valueSpan.setAttribute('class', 'valueSpan');
         this.valueSpan.setAttribute('dominant-baseline', 'hanging');
+        this.valueSpan.textContent = "--";
         this.valueText.appendChild(this.valueSpan);
 
 		if (!this.noDraw) {
@@ -156,7 +157,7 @@ class Gauge {
         }
         else
         {
-            this.gaugeFill.setAttribute('stroke-dashoffset',  (this.circumference / 4) + 'px');
+            //this.gaugeFill.setAttribute('stroke-dashoffset',  (this.circumference / 4) + 'px');
             this.gaugeFill.setAttribute('stroke', '#f00');
         }
     }
@@ -166,7 +167,7 @@ class Gauge {
         //this.valueSpan.textContent = this.value + this.units;
         if(this.value == undefined)
         {
-            this.valueSpan.textContent = "--"
+            //this.valueSpan.textContent = "--"
         }
         else
         {

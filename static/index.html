@@ -72,7 +72,11 @@
             fetch(endpoint + "?" + Date.now()).then(res => res.json()).then(data => {
                 callback(data);
                 setTimeout(() => requestData('/get-data', updateGauges), 50);
-            }).catch(error => { setTimeout(() => requestData('/get-data', updateGauges), 500); });
+            }).catch(error => {
+                callback({}); // Mark all gauges as having stale data
+                // Wait longer before trying again
+                setTimeout(() => requestData('/get-data', updateGauges), 500);
+            });
         };
 
         let batteryCurrent = new Gauge(config.pack_current);
