@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # This script must run on Pi startup
 
-#import can
 import serial
 import time
 import json
-import logging
+#import logging
 from math import pi
 import sys
 import glob
@@ -52,7 +51,7 @@ def get_data():
             print("Stats:", stats)
             if len(stats) > 0 and stats[0] == '{':
                 with open(LOG_FILE, "a+") as data:
-                    data.write(stats)
+                    data.write(time.strftime("%Y-%m-%d %H:%M:%S ") + stats)
                 return stats
         return stats
     except Exception as e: # Possibly an issue with the serial connection
