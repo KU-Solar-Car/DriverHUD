@@ -62,7 +62,7 @@ class FaultBox {
             this.changed = false;
         }
         this.errorMessages = errorMessages;
-        console.log(this.errorMessages, this.changed);
+        //console.log(this.errorMessages, this.changed);
         this.draw();
     }
 }
