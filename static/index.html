@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Driver HUD</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="style.css">
+    <title>Driver HUD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
     <svg width="800px" height="480px" id="svgId">
@@ -38,44 +38,42 @@
                 transform: rotate(135deg);
                 transition: stroke-dashoffset 100ms ease-in-out;
             }
-			.faultBox {
-				background-color: rgba(0, 255, 0, 0.4);
-			}
-			.faultBoxError {
-				background-color: rgba(255, 0, 0, 0.4);
-			}
-			.faultSpan {
-                		font-family: Helvetica;
-                		text-anchor: middle;
-                		font-size: 16px;
-				display: block;
-            		}
-			#faultSect{
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 160px;
-				height: 480px;
-				overflow: auto;
-				padding: 4px;
-				font: 22px Helvetica;
-			}
-			
+            .faultBox {
+                background-color: rgba(0, 255, 0, 0.4);
+            }
+            .faultBoxError {
+                background-color: rgba(255, 0, 0, 0.4);
+            }
+            .faultSpan {
+                font-family: Helvetica;
+                text-anchor: middle;
+                font-size: 16px;
+                display: block;
+            }
+            #faultSect {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 160px;
+                height: 480px;
+                overflow: auto;
+                padding: 4px;
+                font: 22px Helvetica;
+            }
         </style>
     </svg>
-	<div id="faultSect">
-	</div>
-	<script src="config.js"></script>
+    <div id="faultSect">
+    </div>
+    <script src="config.js"></script>
     <script src="gauge.js"></script>
     <script src="faults.js"></script>
     <script>
-
-	let requestData = (endpoint, callback) => {
-		fetch(endpoint + "?" + Date.now()).then(res => res.json()).then(data => {
-			callback(data);
-			setTimeout(() => requestData('/get-data', updateGauges), 50);
-		}).catch(error => { setTimeout(() => requestData('/get-data', updateGauges), 500); });
-	};
+        let requestData = (endpoint, callback) => {
+            fetch(endpoint + "?" + Date.now()).then(res => res.json()).then(data => {
+                callback(data);
+                setTimeout(() => requestData('/get-data', updateGauges), 50);
+            }).catch(error => { setTimeout(() => requestData('/get-data', updateGauges), 500); });
+        };
 
         let batteryCurrent = new Gauge(config.pack_current);
         let motorCurrent = new Gauge(config.motor_current);
@@ -90,162 +88,162 @@
         let motorTemp = new Gauge(config.motor_temp);
         let maxCellVolt = new Gauge(config.max_cell_voltage);
 
-		let faults = new FaultBox({
-			"svgId": "svgId"
-		});
+        let faults = new FaultBox({
+            "svgId": "svgId"
+        });
 
-		let updateGauges = (data) => {
-			batteryCurrent.setValue(data["pack_current"]);
-			motorCurrent.setValue(data["motor_current"]);
-			solarVolt.setValue(data["solar_voltage"]);
-			minCellVolt.setValue(data["min_cell_voltage"]);
-			soc.setValue(data["pack_soc"]);
-			speed.setValue(data["gps_speed"]);
-			packVolt.setValue(data["pack_voltage"]);
-			minPackTemp.setValue(data["min_pack_temp"]);
-			maxPackTemp.setValue(data["max_pack_temp"]);
-			if(data["motor_temp"] > data["motor_controller_temp"])
-			{
-				motorTemp.setValue(data["motor_temp"]);
-			}
-			else
-			{
-				motorTemp.setValue(data["motor_controller_temp"]);
-			}
-			maxCellVolt.setValue(data["max_cell_voltage"]);
-			let errorData = [];
-			bms_errors = [
-				//https://www.orionbms.com/manuals/utility_o2/bms_param_dtc_status_1.html
-				// DTC #1 Status
-   				"Discharge Limit \nEnforcement",// Discharge Limit
-    			"Charger Safety Relay", // Charger Relay
-    			"Internal Hardware", // Int Hardware
-    			"Internal Heatsink \nThermistor", // Int HS Therm
-    			"Internal Software", // Int Software
-    			"High Cell Voltage Too High", // Max Cell V High"
-    			"Low Cell Voltage Too Low",  // Min Cell V Low"
-    			"Pack Too Hot", // Pack Too Hot # Reserved
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null, 
-				// DTC #2 Status
-				"Internal Communication", // Int Comm
-    			"Cell Balancing Stuck \nOff", // Cell Balancing
-    			"Weak Cell", // Weak Cell
-    			"Low Cell Voltage", // Low Cell Voltage
-    			"Open Wiring", // Open Wiring
-    			"Current Sensor", // Current Sensor
-    			"Highest Cell Voltage Over 5 Volts", // Max Cell > 5V
-    			"Cell ASIC", // Cell ASIC
-    			"Weak Pack", // Weak Pack
-    			"Fan Monitor", // Fan Monitor
-    			"Thermistor", // Thermistor
-    			"External Communication", // Ext Comm
-    			"Redundant Power Supply", // Redundant PS
-    			"High Voltage Isolation", // High Volt Iso
-    			"Input Power Supply", // Input PS
-    			"Charge Limit Enforcement" // Charge Limit
-			];
+        let updateGauges = (data) => {
+            batteryCurrent.setValue(data["pack_current"]);
+            motorCurrent.setValue(data["motor_current"]);
+            solarVolt.setValue(data["solar_voltage"]);
+            minCellVolt.setValue(data["min_cell_voltage"]);
+            soc.setValue(data["pack_soc"]);
+            speed.setValue(data["gps_speed"]);
+            packVolt.setValue(data["pack_voltage"]);
+            minPackTemp.setValue(data["min_pack_temp"]);
+            maxPackTemp.setValue(data["max_pack_temp"]);
+            if(data["motor_temp"] > data["motor_controller_temp"])
+            {
+                motorTemp.setValue(data["motor_temp"]);
+            }
+            else
+            {
+                motorTemp.setValue(data["motor_controller_temp"]);
+            }
+            maxCellVolt.setValue(data["max_cell_voltage"]);
+            let errorData = [];
+            bms_errors = [
+                //https://www.orionbms.com/manuals/utility_o2/bms_param_dtc_status_1.html
+                // DTC #1 Status
+                    "Discharge Limit \nEnforcement",// Discharge Limit
+                "Charger Safety Relay", // Charger Relay
+                "Internal Hardware", // Int Hardware
+                "Internal Heatsink \nThermistor", // Int HS Therm
+                "Internal Software", // Int Software
+                "High Cell Voltage Too High", // Max Cell V High"
+                "Low Cell Voltage Too Low",  // Min Cell V Low"
+                "Pack Too Hot", // Pack Too Hot # Reserved
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null, 
+                // DTC #2 Status
+                "Internal Communication", // Int Comm
+                "Cell Balancing Stuck \nOff", // Cell Balancing
+                "Weak Cell", // Weak Cell
+                "Low Cell Voltage", // Low Cell Voltage
+                "Open Wiring", // Open Wiring
+                "Current Sensor", // Current Sensor
+                "Highest Cell Voltage Over 5 Volts", // Max Cell > 5V
+                "Cell ASIC", // Cell ASIC
+                "Weak Pack", // Weak Pack
+                "Fan Monitor", // Fan Monitor
+                "Thermistor", // Thermistor
+                "External Communication", // Ext Comm
+                "Redundant Power Supply", // Redundant PS
+                "High Voltage Isolation", // High Volt Iso
+                "Input Power Supply", // Input PS
+                "Charge Limit Enforcement" // Charge Limit
+            ];
 
-			motor_errors = [
-    			"Motor Angle ID",
-    			"Over Voltage",
-    			"Low Voltage",
-    			null,
-    			"Motor Stall",
-    			"Internal Volts Fault",
-    			"MC Over Temp",
-    			null,
-    			"Internal Reset",
-    			"Hall Throttle Error",
-    			"Angle Sensor Error",
-    			null,
-    			null,
-    			"Motor Over Temp",
-    			"Hall Galv Sensor Error"
-			];
-			
-			solar_errors = [
-				"Battery Volt Level Reached",
-				"Overtemperature",
-				"No Charge",
-				"Undervoltage"
-			]
+            motor_errors = [
+                "Motor Angle ID",
+                "Over Voltage",
+                "Low Voltage",
+                null,
+                "Motor Stall",
+                "Internal Volts Fault",
+                "MC Over Temp",
+                null,
+                "Internal Reset",
+                "Hall Throttle Error",
+                "Angle Sensor Error",
+                null,
+                null,
+                "Motor Over Temp",
+                "Hall Galv Sensor Error"
+            ];
+            
+            solar_errors = [
+                "Battery Volt Level Reached",
+                "Overtemperature",
+                "No Charge",
+                "Undervoltage"
+            ];
 
-			errorNum = parseInt(data["bms_fault"]);
-			errorNum2 = parseInt(data["motor_fault"]);
-			errorNum3 = parseInt(data["solar_faults"]);
-			errors = errorNum.toString(2);
-			errors2 = errorNum2.toString(2);
-			errors3 = errorNum3.toString(2);
-			for(var i = 0; i < errors.length; i++)
-			{
-				if(errors[i] == '1' && bms_errors[i])
-				{
-					errorData.push(bms_errors[i]);
-				}
-			}
-			for(var i = 0; i < errors2.length; i++)
-			{
-				if(errors2[i] == '1' && motor_errors[i])
-				{
-					errorData.push(motor_errors[i]);
-				}
-			}
-			for(var i = 0; i < errors3.length; i++)
-			{
-				if(errors3[i] == '1' && solar_errors[i])
-				{
-					errorData.push(solar_errors[i]);
-				}
-			}
-			faults.setErrors(errorData);
+            errorNum = parseInt(data["bms_fault"]);
+            errorNum2 = parseInt(data["motor_fault"]);
+            errorNum3 = parseInt(data["solar_faults"]);
+            errors = errorNum.toString(2);
+            errors2 = errorNum2.toString(2);
+            errors3 = errorNum3.toString(2);
+            for(var i = 0; i < errors.length; i++)
+            {
+                if(errors[i] == '1' && bms_errors[i])
+                {
+                    errorData.push(bms_errors[i]);
+                }
+            }
+            for(var i = 0; i < errors2.length; i++)
+            {
+                if(errors2[i] == '1' && motor_errors[i])
+                {
+                    errorData.push(motor_errors[i]);
+                }
+            }
+            for(var i = 0; i < errors3.length; i++)
+            {
+                if(errors3[i] == '1' && solar_errors[i])
+                {
+                    errorData.push(solar_errors[i]);
+                }
+            }
+            faults.setErrors(errorData);
 
-			let d = new Date();
-			let hour = d.getHours().toString().padStart(2, '0');
-			let minute = d.getMinutes().toString().padStart(2, '0');
-			timeString = `${hour}:${minute}`;
-			time.setValue(timeString);
-			console.log("HERE");
-		}
+            let d = new Date();
+            let hour = d.getHours().toString().padStart(2, '0');
+            let minute = d.getMinutes().toString().padStart(2, '0');
+            timeString = `${hour}:${minute}`;
+            time.setValue(timeString);
+            console.log("HERE");
+        }
 
-         //Testing purposes
-		/*setInterval(() => {
-		faults.setErrors([
-			"Discharge Limit",
-			"Charger Relay",
-			"Int Hardware",
-			"Int HS Therm",
-			"Int Software",
-			"Max Cell V High",
-			"Min Cell V Low",
-			"Pack Too Hot",
-			"Int Comm",
-			"Cell Balancing",
-			"Weak Cell",
-			"Low Cell Voltage",
-			"Open Wiring",
-			"Current Sensor",
-			"Max Cell > 5V",
-			"Cell ASIC",
-			"Weak Pack",
-			"Fan Monitor",
-			"Thermistor",
-			"Ext Comm",
-			"Redundant PS",
-			"High Volt Iso",
-			"Input PS",
-			"Charge Limit"
-		]);
-		}, 2000);*/
-        
+        //Testing purposes
+        /*setInterval(() => {
+        faults.setErrors([
+            "Discharge Limit",
+            "Charger Relay",
+            "Int Hardware",
+            "Int HS Therm",
+            "Int Software",
+            "Max Cell V High",
+            "Min Cell V Low",
+            "Pack Too Hot",
+            "Int Comm",
+            "Cell Balancing",
+            "Weak Cell",
+            "Low Cell Voltage",
+            "Open Wiring",
+            "Current Sensor",
+            "Max Cell > 5V",
+            "Cell ASIC",
+            "Weak Pack",
+            "Fan Monitor",
+            "Thermistor",
+            "Ext Comm",
+            "Redundant PS",
+            "High Volt Iso",
+            "Input PS",
+            "Charge Limit"
+        ]);
+        }, 2000);*/
+            
 
-		requestData('/get-data', updateGauges);
+        requestData('/get-data', updateGauges);
     </script>
 </body>
 </html>

@@ -15,23 +15,23 @@ from flask import Flask
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
 
 def connect_serial():
-	global ser
-	print("Connecting to serial")
-	while True:
-		port_name = glob.glob('/dev/ttyACM*')
-		if len(port_name) == 0:
-			print("Serial port not found...")
-			time.sleep(1) # Wait 1 sec then try again
-			continue
+    global ser
+    print("Connecting to serial")
+    while True:
+        port_name = glob.glob('/dev/ttyACM*')
+        if len(port_name) == 0:
+            print("Serial port not found...")
+            time.sleep(1) # Wait 1 sec then try again
+            continue
 
-		print("Serial port found:", port_name[0])
-		try:
-			ser = serial.Serial(port_name[0], 115200, timeout=3)
-			print("Serial connected")
-			return
-		except serial.serialutil.SerialException:
-			print("Serial connection failed")
-			time.sleep(1)
+        print("Serial port found:", port_name[0])
+        try:
+            ser = serial.Serial(port_name[0], 115200, timeout=3)
+            print("Serial connected")
+            return
+        except serial.serialutil.SerialException:
+            print("Serial connection failed")
+            time.sleep(1)
 
 LOG_FILE = "/home/pi/data.txt"
 
