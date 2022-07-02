@@ -36,7 +36,7 @@
 		}
 	</style>
 </head>
-<body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
+<body onclick="location.reload();faults.setErrors(['Reloading...'])"> <!-- Tap anywhere to reload in case something breaks -->
     <svg width="800px" height="480px" id="svgId">
         <style>
             .valueText {
@@ -52,6 +52,7 @@
                 text-anchor: middle;
             }
             .minText, .maxText {
+
                 font: 16px Helvetica;
                 text-anchor: start;
             }
@@ -69,13 +70,21 @@
     <script src="faults.js"></script>
     <script>
         let requestData = (endpoint, callback) => {
-            fetch(endpoint + "?" + Date.now()).then(res => res.json()).then(data => {
+            fetch(endpoint + "?" + Date.now()).then(res => res.text()).then(data => {
+                console.log("Full response @", (new Date()).toString(), "::", data);
+                let leftBracket = data.lastIndexOf("{");
+                let rightBracket = data.lastIndexOf("}");
+                if (leftBracket == -1 || rightBracket == -1) throw Error("No JSON substring");
+                let jsonStr = data.substring(leftBracket, rightBracket+1);
+                //console.log("JSON str::", jsonStr);
+                data = JSON.parse(jsonStr);
                 callback(data);
-                setTimeout(() => requestData('/get-data', updateGauges), 50);
+                setTimeout(() => requestData('/get-data', updateGauges), 100); //100
             }).catch(error => {
+            	console.warn(error);
                 callback({}); // Mark all gauges as having stale data
                 // Wait longer before trying again
-                setTimeout(() => requestData('/get-data', updateGauges), 500);
+                setTimeout(() => requestData('/get-data', updateGauges), 500); //500
             });
         };
 
@@ -97,12 +106,25 @@
         });
 
         let updateGauges = (data) => {
+            console.log(data);
+            
             batteryCurrent.setValue(data["pack_current"]);
             motorCurrent.setValue(data["motor_current"]);
             solarVolt.setValue(data["solar_voltage"]);
             minCellVolt.setValue(data["min_cell_voltage"]);
             soc.setValue(data["pack_soc"]);
-            speed.setValue(data["gps_speed"]);
+            if (data["gps_speed"] != undefined) {
+                speed.title = "GPS Speed";
+                speed.setValue(+data["gps_speed"].toFixed(2));
+            }
+            else if (data["motor_speed"]) 
+            {
+                speed.title = "Motor Speed";
+                speed.setValue(+data["motor_speed"].toFixed(2));
+            }
+            else {
+                speed.setValue(undefined);
+            }
             packVolt.setValue(data["pack_voltage"]);
             minPackTemp.setValue(data["min_pack_temp"]);
             maxPackTemp.setValue(data["max_pack_temp"]);
@@ -204,10 +226,19 @@
             let minute = d.getMinutes().toString().padStart(2, '0');
             timeString = `${hour}:${minute}`;
             time.setValue(timeString);*/
+            
             let t = data["gps_time"];
-            let hours = t.substring(2);
-            let minutes = t.substring(2, 4);
-            timeString = `${hours}:${minutes}`;
+            if (t) {
+                let hours = parseInt(t.substring(0, 2)) - 5; // -5 for UTC to CDT
+                if (hours < 0) hours += 24;
+                hours = hours.toString().padStart(2, '0');
+                let minutes = t.substring(2, 4);
+                let seconds = t.substring(4, 6);
+                timeString = `${hours}:${minutes}:${seconds}`;
+            }
+            else {
+                timeString = "--:--:--";
+            }
             time.setValue(timeString);
         }
 

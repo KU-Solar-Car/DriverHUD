@@ -82,8 +82,8 @@ def get_data():
 def shutdown():
     try:
         print("---Serial transmitting---")
-        ser.write(bytes('s', encoding='utf8'))
-        time.sleep(122)
+        ser.write(bytes('d', encoding='utf8'))
+        time.sleep(0.05)
         stats = ser.read_all().decode('utf8')
         print("---Serial response---")
         print(stats)
@@ -91,31 +91,10 @@ def shutdown():
     except Exception as e:
         return "Exception occured"
 
-@app.route("/is-connected")
-def is_connected():
+@app.route("/shutdown")
+def shutdown():
     try:
-        print("---Serial transmitting---")
-        ser.write(bytes('?', encoding='utf8'))
-        time.sleep(5.5)
-        stats = ser.read_all().decode('utf8')
-        print("---Serial response---")
-        print(stats)
-        return stats
-    except Exception as e:
-        return "Exception occured"
-
-@app.route("/is-shutdown")
-def is_shutdown():
-    try:
-        print("---Serial transmitting---")
-        ser.write(bytes('x', encoding='utf8'))
-        time.sleep(5.5)
-        stats = ser.read_all().decode('utf8')
-        print("---Serial response---")
-        print(stats)
-        return stats
-    except Exception as e:
-        return "Exception occured"
+        
 
 if __name__ == '__main__':
     connect_serial()

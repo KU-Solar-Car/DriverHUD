@@ -10,7 +10,7 @@
 		html, body {
 			margin: 0;
 			overflow: hidden;
-			background-color: #fff;
+			background-color: #008;
 			color: #000;
 		}
 
@@ -18,21 +18,37 @@
 		#camera { 
 			width: 100vw;
 			height: 100vh;
-			background: black url(images/no-camera.png) center/contain no-repeat;
+			background: url(images/no-camera.png) center/contain no-repeat;
+		}
+		#error {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1000;
+			color: red;
+			font-size: 64px;
 		}
 	</style>
 	<script type="text/javascript">
-		window.onload = () => {
+		function startCamera() {
 			var camera = document.getElementById('camera');
 			
 			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
 				camera.srcObject = stream;
 				camera.play();
+				document.getElemetById("error").innerText = "";
+			}).catch(err => {
+				document.getElemetById("error").innerText = "Camera failed to connect. Retrying...";
+				setTimeout(startCamera, 5000);
 			});
 		}
+		window.onload = () => startCamera();
 	</script>
 </head>
-<body onclick="location.reload()"> <!-- Tap anywhere to reload in case something breaks -->
+<body onclick="location.reload();document.getElementById('error').innerText='Reloading...'"> <!-- Tap anywhere to reload in case something breaks -->
 	<video id="camera"></video>
+	<div id="error"></div>
 </body>
 </html>

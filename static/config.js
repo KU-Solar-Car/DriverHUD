@@ -92,7 +92,7 @@ let config = {
         "r2": r2,
         "low": 0,
         "high": 1440,
-        "title": "Time",
+        "title": "GPS Time",
         "units": "",
         "noDraw": true,
         "format": (value) => value
