@@ -10,6 +10,11 @@ These are files that need to be configured throughout the OS for the DriverHUD t
 - **driverhud-flask.service**: This is used to automatically start the Flask server on boot. Place in `/lib/systemd/system/`.
 - **autostart**: This removes the cursor (`sudo apt-get install unclutter`) and prevents screen saver. Place in `/home/pi/.config/lxsession/LXDE-pi` (may need to create some of those directories)
 - **start-hud.sh**: This is called by autostart and opens a chromium browser in fullscreen to the correct URL on each monitor. Place in `/home/pi`.
+- **hostapd.conf**: Optional, for broadcasting WiFi from the car for remote development/debugging when away from WiFi
+    - Based on [this tutorial](https://hawksites.newpaltz.edu/myerse/2018/06/08/hostapd-on-raspberry-pi/).
+	- `sudo apt-get install hostapd`
+	- Place config file in `/etc/hostapd/` and set a better password.
+	- `systemctl unmask hostapd` `systemctl enable hostapd` `systemctl stat hostapd`
 - **/etc/modules**: Add `mcp251x` to this file
 
 ## FYI: VSCode remote SSH server
