@@ -4,16 +4,17 @@
     <title>Driver HUD</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
-            * {
-                box-sizing: border-box;
-            }
-            html, body {
-                margin: 0;
-                overflow: hidden;
-                background-color: #fff;
-                color: #000;
-                font: 16px Helvetica;
-            }
+		* {
+			box-sizing: border-box;
+		}
+		html, body {
+			margin: 0;
+			overflow: hidden;
+			background-color: #fff;
+			color: #000;
+			font: 16px Helvetica;
+		}
+		
 		.faultBox {
 			background: url("images/logo.png") no-repeat left bottom/100% rgba(0, 255, 0, 0.4);
 		}
@@ -33,6 +34,23 @@
 			overflow: auto;
 			padding: 4px;
 			font-size: 20px;
+		}
+		
+		#updateIndicator {
+			position: absolute;
+			top: 10px;
+			left: 770px;
+			width: 20px;
+			height: 20px;
+			background: red;
+			border-radius: 50%;
+			opacity: 0;
+		}
+		@keyframes pulse {
+			0 { opacity: 0; }
+			1% { opacity: 100%; }
+			99% { opacity: 100%; }
+			100% { opacity: 0; }
 		}
 	</style>
 </head>
@@ -65,6 +83,7 @@
     </svg>
     <div id="faultSect">
     </div>
+	<div id="updateIndicator"></div>
     <script src="config.js"></script>
     <script src="gauge.js"></script>
     <script src="faults.js"></script>
@@ -107,6 +126,10 @@
 
         let updateGauges = (data) => {
             console.log(data);
+			document.getElementById("updateIndicator").style.animation = "";
+			setTimeout(
+				() => { document.getElementById("updateIndicator").style.animation = "pulse 0.05s linear"; },
+				20);
             
             batteryCurrent.setValue(data["pack_current"]);
             motorCurrent.setValue(data["motor_current"]);
