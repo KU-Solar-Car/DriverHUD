@@ -79,12 +79,12 @@
                 //console.log("JSON str::", jsonStr);
                 data = JSON.parse(jsonStr);
                 callback(data);
-                setTimeout(() => requestData('/get-data', updateGauges), 100); //100
+                setTimeout(() => requestData(endpoint, updateGauges), 100); //100
             }).catch(error => {
             	console.warn(error);
                 callback({}); // Mark all gauges as having stale data
                 // Wait longer before trying again
-                setTimeout(() => requestData('/get-data', updateGauges), 500); //500
+                setTimeout(() => requestData(endpoint, updateGauges), 500); //500
             });
         };
 
@@ -115,12 +115,12 @@
             soc.setValue(data["pack_soc"]);
             if (data["gps_speed"] != undefined) {
                 speed.title = "GPS Speed";
-                speed.setValue(+data["gps_speed"].toFixed(2));
+                speed.setValue(+data["gps_speed"].toFixed(1));
             }
             else if (data["motor_speed"]) 
             {
                 speed.title = "Motor Speed";
-                speed.setValue(+data["motor_speed"].toFixed(2));
+                speed.setValue(+data["motor_speed"].toFixed(1));
             }
             else {
                 speed.setValue(undefined);
@@ -128,7 +128,7 @@
             packVolt.setValue(data["pack_voltage"]);
             minPackTemp.setValue(data["min_pack_temp"]);
             maxPackTemp.setValue(data["max_pack_temp"]);
-            if(data["motor_temp"] && data["motor_temp"] > data["motor_controller_temp"])
+            if(data["motor_temp"] && (!data["motor_controller_temp"] || data["motor_temp"] > data["motor_controller_temp"]))
             {
                 motorTemp.setValue(data["motor_temp"]);
             }
@@ -242,7 +242,14 @@
             time.setValue(timeString);
         }
 
-        requestData('/get-data', updateGauges);
+		// Allow overriding to pull from get-cache-data or get-dummy-data
+		let params = new URLSearchParams(window.location.search);
+		if (params.has("endpoint")) {
+			requestData('/' + params.get("endpoint"), updateGauges);
+		}
+		else {
+			requestData('/get-data', updateGauges);
+		}
     </script>
 </body>
 </html>

@@ -3,13 +3,16 @@
 
 import serial
 import time
+from datetime import datetime
 import json
 #import logging
 from math import pi
 import sys
 import glob
+import random
+import json
 
-from flask import Flask
+from flask import Flask, redirect
 
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
 
@@ -37,11 +40,17 @@ def connect_serial():
 
 LOG_FILE = "/home/pi/data.txt"
 
+cache = "No cached data yet"
+cache_id = 0
 
 app = Flask(__name__)
 # handler = logging.FileHandler('/home/pi/log/hud.log')
 # handler.setLevel(logging.ERROR)
 # app.logger.addHandler(handler)
+
+@app.route('/')
+def index():
+    return redirect("/static/index.html", code=302)
 
 @app.route('/get-data')
 def get_data():
@@ -54,7 +63,11 @@ def get_data():
         print(stats)
         if len(stats) > 0:
             with open(LOG_FILE, "a+") as data:
-                data.write(time.strftime("%Y-%m-%d %H:%M:%S ") + stats)
+                data.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f ") + stats)
+            global cache
+            global cache_id
+            cache = stats
+            cache_id += 1
         return stats
         """
         print("---Read all---")
@@ -77,6 +90,30 @@ def get_data():
         print("Exception!", e)
         connect_serial()
         return "{}"
+		
+@app.route("/get-cached-data")
+def get_cached_data():
+    # Cache-ID is used so that new cache data can be noticed by if the string differs
+    return f"Cache-ID: {cache_id}\n" + cache
+
+@app.route("/get-dummy-data")
+def get_dummy_data():
+    data = {
+        "pack_current": round(random.uniform(0, 60), 2),
+        "motor_current": round(random.uniform(0, 40), 2),
+        "solar_voltage": round(random.uniform(0, 140), 2),
+        "min_cell_voltage": round(random.uniform(2.8, 4.2), 4),
+        "pack_soc": round(random.uniform(0, 100), 1),
+        "gps_speed": round(random.uniform(0, 60), 2),
+        "gps_time": datetime.utcnow().strftime("%H%M%S%f"),
+        "pack_voltage": round(random.uniform(70, 110), 2),
+        "min_pack_temp": round(random.uniform(0, 100), 2),
+        "max_pack_temp": round(random.uniform(0, 100), 2),
+        "motor_temp": round(random.uniform(0, 100), 2),
+        "max_cell_voltage": round(random.uniform(2.8, 4.2), 4),
+        "bms_fault": 0 if random.random() < 0.9 else random.randint(0, 2**32-1), # Not great but something
+    }
+    return "Random data\n" + json.dumps(data)
 
 @app.route("/shutdown")
 def shutdown():
@@ -84,10 +121,10 @@ def shutdown():
         print("---Serial transmitting---")
         ser.write(bytes('s', encoding='utf8'))
         time.sleep(122)
-        stats = ser.read_all().decode('utf8')
+        res = ser.read_all().decode('utf8')
         print("---Serial response---")
-        print(stats)
-        return stats
+        print(res)
+        return res
     except Exception as e:
         return "Exception occured"
 
@@ -97,10 +134,10 @@ def is_connected():
         print("---Serial transmitting---")
         ser.write(bytes('?', encoding='utf8'))
         time.sleep(5.5)
-        stats = ser.read_all().decode('utf8')
+        res = ser.read_all().decode('utf8')
         print("---Serial response---")
-        print(stats)
-        return stats
+        print(res)
+        return res
     except Exception as e:
         return "Exception occured"
 
@@ -110,10 +147,10 @@ def is_shutdown():
         print("---Serial transmitting---")
         ser.write(bytes('x', encoding='utf8'))
         time.sleep(5.5)
-        stats = ser.read_all().decode('utf8')
+        res = ser.read_all().decode('utf8')
         print("---Serial response---")
-        print(stats)
-        return stats
+        print(res)
+        return res
     except Exception as e:
         return "Exception occured"
 
