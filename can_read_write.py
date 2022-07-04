@@ -12,8 +12,9 @@ import sys
 import glob
 import random
 import json
+import gzip
 
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, Response, make_response
 
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
 
@@ -39,7 +40,7 @@ def connect_serial():
             time.sleep(1)
     print("Giving up on serial connection")
 
-LOG_FILE = "/home/pi/data.txt"
+LOG_FILE = "/home/pi/data.xml"
 
 cache = "No cached data yet"
 cache_id = 0
@@ -58,6 +59,25 @@ def update_clock():
     print(f" Updated clock to {datetime_str} ".center(80, "*"))
     return f"Updated clock to {datetime_str}"
 
+@app.route('/log')
+def tail_log():
+    # Read the last 1 MB of the log file
+    # Takes roughly 3 seconds to transfer over WiFi when close
+    # This function will not work when the log file is too small
+    with open(LOG_FILE, 'rb') as f:
+        f.seek(-1024 * 1024 * 2, os.SEEK_END)
+        data = f.read()
+    # text/xml won't render in the browser with broken tags
+    #return Response(data, mimetype="text/plain")
+
+    # gzip drastically reduces size
+    compressed = gzip.compress(data, 5)
+    res = make_response(compressed)
+    res.headers["Content-Type"] = "text/plain"
+    res.headers["Content-Length"] = len(compressed)
+    res.headers["Content-Encoding"] = "gzip"
+    return res
+
 @app.route('/')
 def index():
     return redirect("/static/index.html", code=302)
@@ -73,7 +93,7 @@ def get_data():
         print(stats)
         if len(stats) > 0:
             with open(LOG_FILE, "a+") as data:
-                data.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f ") + stats)
+                data.write('<entry dt="' + datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + '">' + stats + '</entry>\n')
             global cache
             global cache_id
             cache = stats
@@ -100,7 +120,7 @@ def get_data():
         print("Exception!", e)
         connect_serial()
         return "{}"
-		
+
 @app.route("/get-cached-data")
 def get_cached_data():
     # Cache-ID is used so that new cache data can be noticed by if the string differs
