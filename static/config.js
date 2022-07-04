@@ -109,17 +109,23 @@ let config = {
         "units": "V",
         "format": (value) => value + " V"
     },
-    "min_pack_temp": {
+    //"min_pack_temp": {
+    "input_voltage": {
         "svgId": "svgId",
         "cx": column2,
         "cy": row3,
         "r1": r1,
         "r2": r2,
-        "low": 0,
-        "high": 100,
-        "title": "Min Pack",
-        "units": "°C",
-        "format": (value) => value + "°C"
+        //"low": 0,
+        //"high": 100,
+        //"title": "Min Pack",
+        //"units": "°C",
+        //"format": (value) => value + "°C"
+        "low": 9,
+        "high": 14,
+        "title": "Aux Battery",
+        "units": "V",
+        "format": (value) => value + " V"
     },
     "max_pack_temp": {
         "svgId": "svgId",

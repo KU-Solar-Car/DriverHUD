@@ -115,7 +115,8 @@
         let speed = new Gauge(config.gps_speed);
         let time = new Gauge(config.time);
         let packVolt = new Gauge(config.pack_voltage);
-        let minPackTemp = new Gauge(config.min_pack_temp);
+        //let minPackTemp = new Gauge(config.min_pack_temp);
+        let inputVolt = new Gauge(config.input_voltage);
         let maxPackTemp = new Gauge(config.max_pack_temp);
         let motorTemp = new Gauge(config.motor_temp);
         let maxCellVolt = new Gauge(config.max_cell_voltage);
@@ -136,12 +137,11 @@
             solarVolt.setValue(data["solar_voltage"]);
             minCellVolt.setValue(data["min_cell_voltage"]);
             soc.setValue(data["pack_soc"]);
-            if (data["gps_speed"] != undefined) {
+            if (data["gps_speed"] !== undefined) {
                 speed.title = "GPS Speed";
                 speed.setValue(+data["gps_speed"].toFixed(1));
             }
-            else if (data["motor_speed"]) 
-            {
+            else if (data["motor_speed"] !== undefined) {
                 speed.title = "Motor Speed";
                 speed.setValue(+data["motor_speed"].toFixed(1));
             }
@@ -149,7 +149,8 @@
                 speed.setValue(undefined);
             }
             packVolt.setValue(data["pack_voltage"]);
-            minPackTemp.setValue(data["min_pack_temp"]);
+            //minPackTemp.setValue(data["min_pack_temp"]);
+            inputVolt.setValue(data["input_voltage"]);
             maxPackTemp.setValue(data["max_pack_temp"]);
             if(data["motor_temp"] && (!data["motor_controller_temp"] || data["motor_temp"] > data["motor_controller_temp"]))
             {
