@@ -15,6 +15,9 @@ These are files that need to be configured throughout the OS for the DriverHUD t
 	- `sudo apt-get install hostapd`
 	- Place config file in `/etc/hostapd/` and set a better password.
 	- `systemctl unmask hostapd` `systemctl enable hostapd` `systemctl stat hostapd`
+- **sudo_crontab** and **hostapd-fixer.sh**: Optional, janky script to make hostapd restart a couple times if it fails to initialize a hotspot
+    - Append the contents of **sudo_crontab** to `sudo crontab`
+	- Place **hostapd-fixer.sh** in `/home/pi` and `chmod 0777` the script
 - **/etc/modules**: Add `mcp251x` to this file
 
 ## FYI: VSCode remote SSH server

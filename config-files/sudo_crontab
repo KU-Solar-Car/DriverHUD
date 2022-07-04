@@ -1,0 +1,6 @@
+@reboot sleep 10s; /home/pi/hostapd-fixer.sh
+@reboot sleep 30s; /home/pi/hostapd-fixer.sh
+@reboot sleep 60s; /home/pi/hostapd-fixer.sh
+@reboot sleep 120s; /home/pi/hostapd-fixer.sh
+@reboot sleep 240s; /home/pi/hostapd-fixer.sh
+
