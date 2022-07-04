@@ -246,13 +246,14 @@
             }
             faults.setErrors(errorData);
 
-            // TODO: Set clock from GPS time instead
+            // Set clock from system
             /*let d = new Date();
             let hour = d.getHours().toString().padStart(2, '0');
             let minute = d.getMinutes().toString().padStart(2, '0');
             timeString = `${hour}:${minute}`;
             time.setValue(timeString);*/
-            
+
+            // Set clock from GPS
             let t = data["gps_time"];
             if (t) {
                 let hours = parseInt(t.substring(0, 2)) - 5; // -5 for UTC to CDT

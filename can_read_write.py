@@ -136,12 +136,14 @@ def get_dummy_data():
         "pack_soc": round(random.uniform(0, 100), 1),
         "gps_speed": round(random.uniform(0, 60), 2),
         "gps_time": datetime.utcnow().strftime("%H%M%S%f"),
+        "gps_date": datetime.utcnow().strftime("%d%m%y"),
         "pack_voltage": round(random.uniform(70, 110), 2),
         "min_pack_temp": round(random.uniform(0, 100), 2),
         "max_pack_temp": round(random.uniform(0, 100), 2),
         "motor_temp": round(random.uniform(0, 100), 2),
         "max_cell_voltage": round(random.uniform(2.8, 4.2), 4),
         "bms_fault": 0 if random.random() < 0.9 else random.randint(0, 2**32-1), # Not great but something
+        "input_voltage": round(random.uniform(9, 14), 2),
     }
     return "Random data\n" + json.dumps(data)
 
