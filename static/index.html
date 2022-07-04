@@ -259,11 +259,31 @@
                 let minutes = t.substring(2, 4);
                 let seconds = t.substring(4, 6);
                 timeString = `${hours}:${minutes}:${seconds}`;
+
+                let date = data["gps_date"];
+                let day = date.substring(0, 2);
+                let month = date.substring(2, 4);
+                let year = "20" + date.substring(4, 6); // Y2.1k
+
+                let d = new Date(year, month-1, day, hours, minutes, seconds);
+		//d.setTime(d.getTime() - 5*60*60*1000); // -5 for UTC to CDT not actually needed
+
+		// Resync system clock time from GPS if it's behind
+                let delta = d.getTime() - new Date().getTime();
+                if (delta > 60*1000) { // More than a minute behind
+                    let formattedDate = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+                    fetch("/update-clock", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({"datetime_str": formattedDate})
+                    });
+                }
             }
             else {
                 timeString = "--:--:--";
             }
             time.setValue(timeString);
+
         }
 
 		// Allow overriding to pull from get-cache-data or get-dummy-data

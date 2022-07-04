@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # This script must run on Pi startup
 
+import os
 import serial
 import time
 from datetime import datetime
@@ -12,7 +13,7 @@ import glob
 import random
 import json
 
-from flask import Flask, redirect
+from flask import Flask, redirect, request
 
 # info handled specified by https://docs.google.com/document/d/1kUU54jQZAB9nwCM-iA96Kj0fXJ6RNw9nAcBffzji5cU/edit
 
@@ -47,6 +48,15 @@ app = Flask(__name__)
 # handler = logging.FileHandler('/home/pi/log/hud.log')
 # handler.setLevel(logging.ERROR)
 # app.logger.addHandler(handler)
+
+@app.route('/update-clock', methods=['POST'])
+def update_clock():
+    datetime_str = request.get_json()["datetime_str"]
+    os.system("timedatectl set-ntp 0")
+    os.system(f"timedatectl set-time '{datetime_str}'")
+    os.system("timedatectl set-ntp 1")
+    print(f" Updated clock to {datetime_str} ".center(80, "*"))
+    return f"Updated clock to {datetime_str}"
 
 @app.route('/')
 def index():
