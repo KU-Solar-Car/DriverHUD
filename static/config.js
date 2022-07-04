@@ -121,7 +121,7 @@ let config = {
         //"title": "Min Pack",
         //"units": "°C",
         //"format": (value) => value + "°C"
-        "low": 9,
+        "low": 7,
         "high": 14,
         "title": "Aux Battery",
         "units": "V",

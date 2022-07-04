@@ -186,6 +186,14 @@ def is_shutdown():
     except Exception as e:
         return "Exception occured"
 
+@app.route("/restart-data", methods=['POST'])
+def restart_data():
+	os.system("service driverhud-flask restart")
+
+@app.route("/restart-wifi", methods=['POST'])
+def restart_wifi():
+	os.system("service hostapd restart")
+
 @app.after_request
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*"

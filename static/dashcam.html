@@ -14,9 +14,9 @@
 			color: #000;
 		}
 
-		/* Webcam is displayed at 4:3, despite actually being 16:9 */
+		/* Webcam is 4:3 */
 		#camera { 
-			width: 100vw;
+			width: 134vh;
 			height: 100vh;
 			background: url(images/no-camera.png) center/contain no-repeat;
 		}
@@ -29,6 +29,22 @@
 			z-index: 1000;
 			color: red;
 			font-size: 64px;
+			pointer-events: none;
+		}
+		#restart-data, #restart-wifi {
+			position: absolute;
+			right: 0;
+			z-index: 500;
+			font-size: 30px;
+			width: 160px;
+			height: 160px;
+			white-space: normal;
+		}
+		#restart-data {
+			top: 0;
+		}
+		#restart-wifi {
+			bottom: 0;
 		}
 	</style>
 	<script type="text/javascript">
@@ -45,10 +61,18 @@
 			});
 		}
 		window.onload = () => startCamera();
+		function restartData() {
+			fetch("/restart-data", {method: "POST"});
+		}
+		function restartWifi() {
+			fetch("/restart-wifi", {method: "POST"});
+		}
 	</script>
 </head>
-<body onclick="location.reload();document.getElementById('error').innerText='Reloading...'"> <!-- Tap anywhere to reload in case something breaks -->
-	<video id="camera"></video>
+<body> <!-- Tap anywhere to reload in case something breaks -->
+	<video id="camera" onclick="location.reload();document.getElementById('error').innerText='Reloading...'"></video>
+	<input type="button" id="restart-data" onclick="restartData()" value="Restart data receiver">
+	<input type="button" id="restart-wifi" onclick="restartWifi()" value="Restart WiFi hotspot">
 	<div id="error"></div>
 </body>
 </html>
