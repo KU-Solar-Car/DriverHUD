@@ -154,6 +154,11 @@ def is_shutdown():
     except Exception as e:
         return "Exception occured"
 
+@app.after_request
+def after_request(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
+
 if __name__ == '__main__':
     connect_serial()
     app.run(host="0.0.0.0", threaded=False)
