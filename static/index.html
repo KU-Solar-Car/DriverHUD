@@ -88,6 +88,8 @@
     <script src="gauge.js"></script>
     <script src="faults.js"></script>
     <script>
+        let lastSend = new Date(); // Time data last sent to cloud
+        
         let requestData = (endpoint, callback) => {
             fetch(endpoint + "?" + Date.now()).then(res => res.text()).then(data => {
                 console.log("Full response @", (new Date()).toString(), "::", data);
@@ -284,6 +286,19 @@
             }
             time.setValue(timeString);
 
+            if (new Date().getTime() - lastSend.getTime() > 1000) {
+                // Attempt to transmit data to cloud (if connected to someone's WiFi hotspot)
+                fetch("https://ku-solar-car-b87af.appspot.com/car", {
+                    method: "POST",
+                    headers: {
+                        "Host": "ku-solar-car-b87af.appspot.com",
+                        "Content-Type": "application/json",
+                        "Authentication": "LIpOYlTISfrgvianaqMWiFtCqRvcFPwy"
+                    },
+                    body: JSON.stringify(data)
+                });
+                lastSend = new Date();
+            }
         }
 
 		// Allow overriding to pull from get-cache-data or get-dummy-data
